@@ -1,83 +1,23 @@
-BtechMap.in
-BtechMap.in is a one-stop platform designed to guide B.Tech students in India through their academic and career journey. It provides clear roadmaps, curated resources, and progress tracking to help students learn effectively, get certified, and find opportunities.
+# 🎓 BtechMap.in
 
-This project was built to solve a common problem: students are often lost, not knowing what to learn, in what order, or where to find reliable resources. BtechMap provides a single, structured path from first-year fundamentals to landing your first internship.
+BtechMap.in is a complete full-stack web platform designed to guide B.Tech students in India throughout their academic and career journey. It solves the common confusion students face like “What should I learn next?” and “Where can I find good resources?” by providing clear interactive roadmaps, curated YouTube resources, quizzes, progress tracking, and a leaderboard. The platform helps students plan their learning path effectively, track their growth, and stay motivated through gamified elements.
 
-✨ Key Features
-🗺️ Interactive Career Roadmaps: Detailed, step-by-step roadmaps for various domains, including:
+BtechMap.in includes interactive roadmaps for various domains like DSA, Web Development, GATE, AI & ML, Data Science, and Programming in Java or Python. Every roadmap contains structured topics with linked resources, and the user’s progress is saved persistently in a PostgreSQL database via a Go backend, so that their learning state is available on any device. The authentication system is built with Go, GORM, and JWT, allowing users to securely sign up with their college name and log in using encrypted credentials. Students can take quizzes after completing modules, earn badges for finishing roadmaps, and gain points that are reflected on a college-wise leaderboard. There is also a monthly internship board showcasing the latest internship openings from top companies and government organizations like DRDO, ISRO, and others.
 
-Academic Excellence
+The platform uses React.js for the frontend, Go (with Fiber framework) for the backend, PostgreSQL as the database, and GORM for ORM mapping between Go structs and database tables. JWT is used for secure, stateless authentication. The complete stack ensures a smooth, reliable, and scalable architecture for both learners and developers.
 
-GATE Preparation
+To set up the project locally, first clone the repository by running:  
+`git clone https://github.com/abdulfarhath/btechmap.in.git` and then navigate to the backend folder using `cd btechmap.in/backend`. Install Go dependencies using `go mod tidy`. Start the PostgreSQL service with `sudo service postgresql start` and then open the PostgreSQL CLI using `sudo -u postgres psql`. Inside psql, create a database using `CREATE DATABASE btechmap;` and exit with `\q`. After that, run your migrations with `sudo -u postgres psql -d btechmap -f migrations/001_create_users_table.sql`. Once the database setup is done, run the Go server using `go run cmd/api/main.go`. The backend will start and listen at http://localhost:8080.
 
-Data Structures & Algorithms (DSA)
+Now, for the frontend setup, open a new terminal window and navigate to the frontend directory using `cd ../frontend`. Install the required dependencies using `npm install` and start the development server using `npm run dev`. The React app will start and run on http://localhost:5173. You can now open the browser and interact with the full application where backend and frontend communicate seamlessly.
 
-Web Development
+In summary, the entire workflow to get the project running locally is as follows:  
+`git clone https://github.com/abdulfarhath/btechmap.in.git && cd btechmap.in/backend && go mod tidy && sudo service postgresql start && sudo -u postgres psql -c "CREATE DATABASE btechmap;" && sudo -u postgres psql -d btechmap -f migrations/001_create_users_table.sql && go run cmd/api/main.go`  
+and in a new terminal:  
+`cd ../frontend && npm install && npm run dev`.  
 
-AI & Machine Learning
+Future improvements include building an admin panel to manage internships dynamically, a notes feature allowing users to store their personal notes alongside each roadmap step, and profile customization where users can edit their college name and upload a profile picture.  
 
-Data Science
-
-Java & Python Programming
-
-📚 Curated Resources: Every single step in a roadmap is linked to a high-quality, free YouTube resource, so students can learn immediately.
-
-✅ Persistent Progress Tracking: Uses a Go backend and PostgreSQL database to save user progress. Checkboxes, quiz scores, and badges are saved to your account and available on any device.
-
-🏆 Gamified Learning & Leaderboard:
-
-Section Quizzes: Test your knowledge at the end of each module.
-
-Final Challenges: Pass a final exam after completing all steps to earn a "Badge" for that roadmap.
-
-College-wise Leaderboard: A live, filterable leaderboard ranks users based on their scores (earned from steps, quizzes, and badges), fostering healthy competition.
-
-🚀 Monthly Internship Board: A dedicated page with the latest internship openings from top companies and government organizations (like DRDO, ISRO), sorted by month.
-
-🔐 Secure User Authentication: Full-featured user signup (with college name for the leaderboard) and login system using JWT for secure sessions.
-
-🛠️ Tech Stack
-This project is a modern, full-stack application.
-
-Frontend: React.js
-
-Backend: Go (using the Gofiber framework)
-
-Database: PostgreSQL
-
-Go Libraries: GORM (for database ORM), JWT (for auth)
-
-Frontend Libraries: lucide-react (for icons)
-
-🚀 Getting Started
-To run this project locally, you will need Go, Node.js, and PostgreSQL installed.
-
-1. Backend Server (Go)
-Bash
-
-# Navigate to the backend directory
-cd btechmap-backend
-
-# Install dependencies
-go mod tidy
-
-# Create a .env file (or set environment variables) for:
-# DATABASE_DSN="host=localhost user=youruser password=yourpass dbname=btechmap port=5432"
-# JWT_SECRET="your-super-secret-key"
-
-# Run the server
-go run main.go
-The backend server will start on http://localhost:8080.
-
-2. Frontend Client (React)
-Bash
-
-# In a new terminal, navigate to the frontend directory
-cd btechmap-frontend
-
-# Install dependencies
-npm install
-
-# Run the development server
-npm run dev
-The React app will start on http://localhost:5173.
+Developed by **Abdul Farhath Mohammad**, Full Stack Developer (MERN + Go).  
+📧 Contact: [abdulfarhathmohd@gmail.com](mailto:abdulfarhathmohd@gmail.com)  
+Licensed under the **MIT License**.
