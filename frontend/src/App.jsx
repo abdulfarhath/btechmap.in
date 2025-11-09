@@ -4,6 +4,9 @@ import ProgressRing from './components/ProcessRing.jsx';
 import { initialRoadmapsData } from './Data.js';
 import Section from './components/Section.jsx';
 import Dashboard from './components/Dashboard.jsx';
+import AuthModal from './components/AuthModal.jsx';
+import ProfilePage from './components/ProfilePage.jsx';
+import { getUser } from './authService.js';
 
 const calculateProgress = (data) => {
   const updatedData = { ...data };
@@ -26,11 +29,21 @@ export default function App() {
   const [roadmapsData, setRoadmapsData] = useState(() => calculateProgress(initialRoadmapsData));
   const [activeRoadmap, setActiveRoadmap] = useState('dashboard');
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
+  const [showAuth, setShowAuth] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    // Check if user is logged in on mount
+    const userData = getUser();
+    if (userData) {
+      setUser(userData);
+    }
+  }, []);
 
   const handleToggleStep = (sectionId, stepId) => {
     setRoadmapsData(prevData => {
@@ -43,33 +56,61 @@ export default function App() {
     });
   };
 
+  const handleAuthSuccess = () => {
+    // Get the updated user data and update state
+    const userData = getUser();
+    setUser(userData);
+    console.log('User logged in:', userData);
+  };
+
   const data = roadmapsData[activeRoadmap];
   const progressPercent =
     data && data.totalSteps > 0 ? Math.round((data.completedSteps / data.totalSteps) * 100) : 0;
 
   return (
     <>
-      {/* Hide scrollbar styles for the main content container */}
+      {/* Authentication Modal */}
+      {showAuth && (
+        <AuthModal
+          mode={showAuth}
+          onClose={() => setShowAuth(null)}
+          onSuccess={handleAuthSuccess}
+        />
+      )}
+
+      {/* Hide scrollbar styles */}
       <style>{`
         .no-scrollbar {
-          -ms-overflow-style: none; /* IE and Edge */
-          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
         .no-scrollbar::-webkit-scrollbar {
-          display: none; /* Chrome, Safari, Opera */
+          display: none;
         }
       `}</style>
 
-      <Sidebar activeRoadmap={activeRoadmap} setActiveRoadmap={setActiveRoadmap} />
+      <Sidebar 
+        activeRoadmap={activeRoadmap} 
+        setActiveRoadmap={setActiveRoadmap}
+        setShowAuth={setShowAuth}
+        currentUser={user}
+      />
 
       <div className="flex-1 ml-64 p-8 bg-black max-w-[calc(100vw-260px)] no-scrollbar overflow-y-auto">
         {/* Header */}
         <header className="mb-8 flex justify-between items-start">
           <div>
             {activeRoadmap === 'dashboard' ? (
-              <h1 className="text-3xl font-bold mb-4 flex items-center gap-3">
-                📊 Dashboard
-              </h1>
+              <>
+                <h1 className="text-3xl font-bold mb-4 flex items-center gap-3">
+                  📊 Dashboard
+                </h1>
+                {user && (
+                  <p className="text-gray-400">
+                    Welcome back, <span className="text-cyan-400 font-semibold">{user.name}</span>! 👋
+                  </p>
+                )}
+              </>
             ) : (
               <>
                 <h1 className="text-3xl font-bold mb-4 flex items-center gap-3">

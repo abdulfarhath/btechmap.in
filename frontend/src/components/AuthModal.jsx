@@ -1,0 +1,175 @@
+import React, { useState } from 'react';
+import { X } from 'lucide-react';
+import { login, signup } from '../authService.js';
+
+const AuthModal = ({ mode, onClose, onSuccess }) => {
+    const [isLogin, setIsLogin] = useState(mode === 'login');
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: ''
+    });
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+        setError('');
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+
+        try {
+            let result;
+            if (isLogin) {
+                result = await login(formData.email, formData.password);
+            } else {
+                if (!formData.name) {
+                    setError('Name is required');
+                    setLoading(false);
+                    return;
+                }
+                result = await signup(formData.name, formData.email, formData.password);
+            }
+            
+            console.log('Authentication successful:', result);
+            
+            // Call onSuccess callback to update parent component
+            onSuccess();
+            
+            // Close modal after a brief delay to ensure state updates
+            setTimeout(() => {
+                onClose();
+            }, 100);
+        } catch (err) {
+            setError(err.message || 'Authentication failed');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const toggleMode = () => {
+        setIsLogin(!isLogin);
+        setError('');
+        setFormData({ name: '', email: '', password: '' });
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-gray-900 rounded-xl p-8 max-w-md w-full relative border border-gray-800">
+                {/* Close button */}
+                <button
+                    onClick={onClose}
+                    className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+                >
+                    <X size={24} />
+                </button>
+
+                {/* Header */}
+                <div className="mb-6">
+                    <h2 className="text-3xl font-bold text-white mb-2">
+                        {isLogin ? 'Welcome Back!' : 'Create Account'}
+                    </h2>
+                    <p className="text-gray-400">
+                        {isLogin 
+                            ? 'Login to continue your learning journey' 
+                            : 'Sign up to start tracking your progress'
+                        }
+                    </p>
+                </div>
+
+                {/* Error message */}
+                {error && (
+                    <div className="mb-4 p-3 bg-red-500 bg-opacity-10 border border-red-500 rounded-lg text-red-500 text-sm">
+                        {error}
+                    </div>
+                )}
+
+                {/* Form */}
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    {!isLogin && (
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-300 mb-2">
+                                Name
+                            </label>
+                            <input
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-400 transition-colors"
+                                placeholder="Enter your name"
+                                required={!isLogin}
+                            />
+                        </div>
+                    )}
+
+                    <div>
+                        <label className="block text-sm font-semibold text-gray-300 mb-2">
+                            Email
+                        </label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-400 transition-colors"
+                            placeholder="Enter your email"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-semibold text-gray-300 mb-2">
+                            Password
+                        </label>
+                        <input
+                            type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-400 transition-colors"
+                            placeholder="Enter your password"
+                            required
+                            minLength={6}
+                        />
+                        {!isLogin && (
+                            <p className="text-xs text-gray-500 mt-1">
+                                Password must be at least 6 characters
+                            </p>
+                        )}
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full py-3 bg-cyan-400 hover:bg-cyan-500 text-gray-900 font-bold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {loading ? 'Processing...' : (isLogin ? 'Login' : 'Sign Up')}
+                    </button>
+                </form>
+
+                {/* Toggle mode */}
+                <div className="mt-6 text-center">
+                    <p className="text-gray-400">
+                        {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
+                        <button
+                            onClick={toggleMode}
+                            className="text-cyan-400 hover:text-cyan-300 font-semibold transition-colors"
+                        >
+                            {isLogin ? 'Sign Up' : 'Login'}
+                        </button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default AuthModal;
