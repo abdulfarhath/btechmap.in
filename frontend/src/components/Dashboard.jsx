@@ -19,7 +19,7 @@ const Dashboard = ({ onSelectRoadmap }) => {
             >
                 <div className="flex items-center gap-3 mb-4">
                     <span className="text-4xl">{roadmap.icon}</span>
-                    <h3 className="text-xl font-bold flex-1">{roadmap.cardTitle}</h3>
+                    <h3 className="text-xl font-bold text-white flex-1">{roadmap.cardTitle}</h3>
                 </div>
                 
                 <p className="text-sm text-gray-400 mb-4 line-clamp-2">
@@ -77,21 +77,21 @@ const Dashboard = ({ onSelectRoadmap }) => {
             <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
                     <div className="text-3xl mb-2">📚</div>
-                    <div className="text-2xl font-bold mb-1">
+                    <div className="text-2xl text-gray-300 font-bold mb-1">
                         {careerPaths.length + techPaths.length}
                     </div>
-                    <div className="text-sm text-gray-400">Total Roadmaps</div>
+                    <div className="text-sm  text-gray-400">Total Roadmaps</div>
                 </div>
                 <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
                     <div className="text-3xl mb-2">✅</div>
-                    <div className="text-2xl font-bold mb-1">
+                    <div className="text-2xl text-gray-300 font-bold mb-1">
                         {Object.values(initialRoadmapsData).reduce((sum, r) => sum + (r.completedSteps || 0), 0)}
                     </div>
                     <div className="text-sm text-gray-400">Steps Completed</div>
                 </div>
                 <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
                     <div className="text-3xl mb-2">🎯</div>
-                    <div className="text-2xl font-bold mb-1">
+                    <div className="text-2xl text-gray-300 font-bold mb-1">
                         {Object.values(initialRoadmapsData).reduce((sum, r) => sum + (r.totalSteps || 0), 0)}
                     </div>
                     <div className="text-sm text-gray-400">Total Steps</div>

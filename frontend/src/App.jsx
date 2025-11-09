@@ -96,7 +96,7 @@ export default function App() {
         currentUser={user}
       />
 
-      <div className="flex-1 ml-64 p-8 bg-black max-w-[calc(100vw-260px)] no-scrollbar overflow-y-auto">
+      <div className="flex-1 ml-64 p-8 bg-black max-w-[calc(100vw-250px)] no-scrollbar overflow-y-auto">
         {/* Header */}
         <header className="mb-8 flex justify-between items-start">
           <div>
@@ -150,10 +150,10 @@ export default function App() {
                 <ProgressRing progress={progressPercent} color={data.color} />
                 <div className="flex-1"></div>
                 <div>
-                  <h3 className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                  <h3 className="text-sm text-white dark:text-gray-400 mb-2">
                     TOTAL PROGRESS
                   </h3>
-                  <p className="text-2xl font-bold">
+                  <p className="text-2xl text-gray-500 font-bold">
                     {data.completedSteps} / {data.totalSteps} STEPS
                   </p>
                 </div>

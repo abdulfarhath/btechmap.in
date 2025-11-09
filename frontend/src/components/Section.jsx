@@ -9,7 +9,7 @@ const Section = ({ section, roadmapColor, onToggleStep }) => {
 
     return (
         <div className="bg-gray-900 border border-gray-800 rounded-xl mb-6 overflow-hidden">
-            <div className="flex justify-between items-center p-5 cursor-pointer transition-colors hover:bg-gray-800/50" onClick={() => setExpanded(!expanded)}>
+            <div className="flex justify-between text-white items-center p-5 cursor-pointer transition-colors hover:bg-gray-800/50" onClick={() => setExpanded(!expanded)}>
                 <div className="flex items-center gap-3">
                     {expanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
                     <span className="text-lg font-semibold">{section.title}</span>

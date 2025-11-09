@@ -2,7 +2,7 @@ import { FileText, Star } from "lucide-react";
 
 const StepRow = ({ step, roadmapColor, onToggle }) => {
     return (
-        <div className="grid grid-cols-[80px_1fr_100px_80px_100px] items-center gap-4 px-6 py-4 border-b border-gray-800 transition-colors last:border-b-0 hover:bg-gray-800/50">
+        <div className="grid grid-cols-[80px_1fr_100px_80px_100px] text-white items-center gap-4 px-6 py-4 border-b border-gray-800 transition-colors last:border-b-0 hover:bg-gray-800/50">
             <div className="text-left">
                 <div 
                     className={`w-6 h-6 border-2 rounded-md flex items-center justify-center cursor-pointer transition-all font-bold`} 

@@ -16,7 +16,7 @@ const ProgressRing = ({ progress, color }) => {
                     transform="rotate(-90 45 45)"
                 />
             </svg>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xl font-bold" style={{ color }}>{progress}%</div>
+            <div className="absolute top-1/2 left-1/2 text-gray-300 -translate-x-1/2 -translate-y-1/2 text-xl font-bold" style={{ color }}>{progress}%</div>
         </div>
     );
 };
