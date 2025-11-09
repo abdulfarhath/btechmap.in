@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Yusei+Magic&family=Fredoka:wght@500;600;700&display=swap');
+@import "tailwindcss";
+
+* {
+    font-family: 'Yusei Magic', sans-serif;
+    font-size: large;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Fredoka', sans-serif;
+}
+
+@theme {
+  --color-background-light: #f9fafb;
+  --color-background-dark: #0f172a;
+  --color-text-light: #111827;
+  --color-text-dark: #f8fafc;
+}
