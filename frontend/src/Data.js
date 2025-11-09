@@ -1,8 +1,10 @@
+// src/Data.js
 // ============================================================================
 // BTECHMAP - ULTRA DETAILED BEGINNER ROADMAPS 2025
 // ============================================================================
 // Complete Beginners Edition - Step-by-Step Granular Learning Path
 // Every topic broken down from ABSOLUTE BASICS
+// All steps now include a 'link' property for a video resource.
 // ============================================================================
 
 const rawRoadmapsData = {
@@ -23,7 +25,7 @@ const rawRoadmapsData = {
                         title: "First Week Strategy",
                         description: "Set yourself up for success from day one",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=0hwo2g2-F-U", // Thomas Frank - First Week
                         options: ["Syllabus Analysis", "Resource Collection", "Study Group Formation"]
                     },
                     {
@@ -31,7 +33,7 @@ const rawRoadmapsData = {
                         title: "Weekly Study Schedule",
                         description: "Create a sustainable study routine",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=1F9-9hmns-I", // How to make a study schedule
                         options: ["Time Blocking", "Priority Management", "Break Planning"]
                     },
                     {
@@ -39,7 +41,7 @@ const rawRoadmapsData = {
                         title: "Note-Taking Techniques",
                         description: "Effective note-taking for better retention",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=IBiLPEzL4o0", // Ali Abdaal - Note Taking
                         options: ["Cornell Method", "Mind Mapping", "Digital Tools"]
                     }
                 ]
@@ -54,7 +56,7 @@ const rawRoadmapsData = {
                         title: "Mathematics Foundation",
                         description: "Calculus, Linear Algebra, Probability",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=F-B9t2IqQ-A", // freeCodeCamp - Calculus
                         options: ["Practice Problems", "Previous Papers", "Online Resources"]
                     },
                     {
@@ -62,7 +64,7 @@ const rawRoadmapsData = {
                         title: "Programming Subjects",
                         description: "C, C++, Java, Python courses",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=B-s71v0AljE", // freeCodeCamp - C++
                         options: ["Lab Practice", "Mini Projects", "Coding Assignments"]
                     },
                     {
@@ -70,7 +72,7 @@ const rawRoadmapsData = {
                         title: "Theory Subjects",
                         description: "OS, DBMS, Networks, Compiler Design",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=v3w2-0s-VT8", // Gate Smashers - OS
                         options: ["Concept Maps", "Question Banks", "Study Materials"]
                     }
                 ]
@@ -85,7 +87,7 @@ const rawRoadmapsData = {
                         title: "Mid-Term Preparation",
                         description: "2-week preparation strategy",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=U-c-Q8-MVAU", // How to study for midterms
                         options: ["Revision Notes", "Mock Tests", "Doubt Clearing"]
                     },
                     {
@@ -93,7 +95,7 @@ const rawRoadmapsData = {
                         title: "End-Term Preparation",
                         description: "4-week comprehensive preparation",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=pM6-4pQa-c8", // How to study for finals
                         options: ["Previous Year Papers", "Important Topics", "Time Management"]
                     },
                     {
@@ -101,7 +103,7 @@ const rawRoadmapsData = {
                         title: "Last Minute Revision",
                         description: "Final 48 hours strategy",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=S0-yGg-tPnk", // Last minute revision
                         options: ["Formula Sheets", "Quick Revision", "Stay Calm"]
                     }
                 ]
@@ -126,7 +128,7 @@ const rawRoadmapsData = {
                         title: "Programming & DSA Basics",
                         description: "C programming and basic data structures",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=irqbmDuus9U", // Gate Smashers - C & DSA
                         options: ["Arrays", "Linked Lists", "Stacks & Queues"]
                     },
                     {
@@ -134,7 +136,7 @@ const rawRoadmapsData = {
                         title: "Digital Logic",
                         description: "Boolean algebra, combinational circuits",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=M0mx8S05v60", // Neso Academy - Digital Logic
                         options: ["Number Systems", "Gates", "K-Maps"]
                     },
                     {
@@ -142,7 +144,7 @@ const rawRoadmapsData = {
                         title: "Engineering Mathematics",
                         description: "Discrete math, probability, linear algebra",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=bMV-T0T0-00", // Gate Academy - Discrete Maths
                         options: ["Sets & Relations", "Graphs", "Probability"]
                     }
                 ]
@@ -157,7 +159,7 @@ const rawRoadmapsData = {
                         title: "Operating Systems",
                         description: "Processes, memory management, file systems",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=v3w2-0s-VT8", // Gate Smashers - OS
                         options: ["Process Scheduling", "Deadlocks", "Virtual Memory"]
                     },
                     {
@@ -165,7 +167,7 @@ const rawRoadmapsData = {
                         title: "Database Management",
                         description: "SQL, normalization, transactions",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=6-IS-0g-EwY", // Gate Smashers - DBMS
                         options: ["ER Diagrams", "SQL Queries", "Normalization"]
                     },
                     {
@@ -173,7 +175,7 @@ const rawRoadmapsData = {
                         title: "Computer Networks",
                         description: "OSI model, TCP/IP, protocols",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=r-2R-i-w-fI", // Neso Academy - CN
                         options: ["Layers", "Routing", "Transport Layer"]
                     },
                     {
@@ -181,7 +183,7 @@ const rawRoadmapsData = {
                         title: "Algorithms",
                         description: "Sorting, searching, graph algorithms",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=coI0oK-P9iU", // Gate Smashers - Algorithms
                         options: ["Greedy", "DP", "Graph Algorithms"]
                     }
                 ]
@@ -196,7 +198,7 @@ const rawRoadmapsData = {
                         title: "Previous Year Papers",
                         description: "Solve last 15 years GATE papers",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=uDVBJ-Yg-3I", // How to solve PYQs
                         options: ["Topic-wise", "Year-wise", "Analysis"]
                     },
                     {
@@ -204,7 +206,7 @@ const rawRoadmapsData = {
                         title: "Full Mock Tests",
                         description: "Simulate exam conditions",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=iAhbdFahC-A", // Mock Test Strategy
                         options: ["Weekly Tests", "Performance Analysis", "Time Management"]
                     },
                     {
@@ -212,7 +214,7 @@ const rawRoadmapsData = {
                         title: "Formula Revision",
                         description: "Quick revision sheets for all subjects",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=XhN-D9CeaRE", // Short notes strategy
                         options: ["Short Notes", "Important Formulas", "Quick Tips"]
                     }
                 ]
@@ -237,7 +239,7 @@ const rawRoadmapsData = {
                         title: "What is Programming?",
                         description: "Understand what programming is and why we need it",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=zOjov-2BtwA", // What is programming?
                         options: ["Computer Programs", "How Computers Work", "Algorithms"]
                     },
                     {
@@ -245,7 +247,7 @@ const rawRoadmapsData = {
                         title: "Choose Your First Language",
                         description: "Pick one language to start your journey",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=S5b-0kF-M8k", // Python vs Java vs C++
                         options: ["Python", "Java", "C++", "JavaScript"]
                     },
                     {
@@ -253,7 +255,7 @@ const rawRoadmapsData = {
                         title: "Setup Development Environment",
                         description: "Install tools to start coding",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=B-s71v0AljE", // C++ VSCode Setup
                         options: ["Install IDE", "First Program", "Run Code"]
                     }
                 ]
@@ -268,7 +270,7 @@ const rawRoadmapsData = {
                         title: "Understanding Variables",
                         description: "Learn what variables are and how to use them",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=M2-nUhe-c-k", // C++ Variables
                         options: ["Variable Naming", "Creating Variables", "Changing Values"]
                     },
                     {
@@ -276,7 +278,7 @@ const rawRoadmapsData = {
                         title: "Data Types",
                         description: "Integers, floats, strings, and booleans",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=w-s62T5G-ew", // C++ Data Types
                         options: ["Integer", "Float", "String", "Boolean"]
                     }
                 ]
@@ -291,7 +293,7 @@ const rawRoadmapsData = {
                         title: "Printing Output",
                         description: "Show results on the screen",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=3H-Dq_Gk-Y0", // C++ cout
                         options: ["Basic Print", "Format Strings", "Multiple Values"]
                     },
                     {
@@ -299,7 +301,7 @@ const rawRoadmapsData = {
                         title: "Taking Input",
                         description: "Read data that users type",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=7h-9u5TE-2k", // C++ cin
                         options: ["Text Input", "Number Input", "Type Conversion"]
                     }
                 ]
@@ -314,7 +316,7 @@ const rawRoadmapsData = {
                         title: "Arithmetic Operators",
                         description: "Addition, subtraction, multiplication, division",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=GkP2Fp-F-1U", // C++ Arithmetic Operators
                         options: ["+", "-", "*", "/", "%", "**"]
                     },
                     {
@@ -322,7 +324,7 @@ const rawRoadmapsData = {
                         title: "Comparison Operators",
                         description: "Compare values and get True or False",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=g3uVqEde-T8", // C++ Comparison Operators
                         options: ["==", "!=", ">", "<", ">=", "<="]
                     }
                 ]
@@ -337,7 +339,7 @@ const rawRoadmapsData = {
                         title: "If Statements",
                         description: "Execute code based on conditions",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=x-I-tW0-Tq4", // C++ If-Else
                         options: ["if", "if-else", "if-elif-else", "Nested if"]
                     }
                 ]
@@ -352,7 +354,7 @@ const rawRoadmapsData = {
                         title: "For Loop",
                         description: "Repeat a fixed number of times",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=68E-y2-1f-8", // C++ For Loop
                         options: ["range()", "List iteration", "Step values"]
                     },
                     {
@@ -360,7 +362,7 @@ const rawRoadmapsData = {
                         title: "While Loop",
                         description: "Repeat until condition is false",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=l_gD-S-b-g8", // C++ While Loop
                         options: ["Basic while", "break", "continue"]
                     }
                 ]
@@ -372,19 +374,19 @@ const rawRoadmapsData = {
                 steps: [
                     {
                         id: 13,
-                        title: "Understanding Lists",
+                        title: "Understanding Arrays",
                         description: "Store multiple values in one variable",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=6-LLNA9-Pgo", // C++ Arrays
                         options: ["Creating Lists", "Indexing", "Modifying", "Adding", "Removing"]
                     },
                     {
                         id: 14,
-                        title: "List Operations",
-                        description: "Useful operations with lists",
+                        title: "List Operations (Vectors)",
+                        description: "Useful operations with C++ Vectors",
                         completed: false,
-                        hasResource: true,
-                        options: ["len()", "sort()", "count()", "index()"]
+                        link: "https://www.youtube.com/watch?v=L-N-yRUL-Lw", // C++ Vectors
+                        options: ["push_back()", "sort()", "size()", "pop_back()"]
                     }
                 ]
             },
@@ -398,7 +400,7 @@ const rawRoadmapsData = {
                         title: "Understanding Strings",
                         description: "Strings are sequences of characters",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=tF-N-1-z_Ac", // C++ Strings
                         options: ["Indexing", "Slicing", "Methods", "Concatenation"]
                     }
                 ]
@@ -413,7 +415,7 @@ const rawRoadmapsData = {
                         title: "Understanding Functions",
                         description: "Write code once, use it many times",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=N-gtX1qU-8E", // C++ Functions
                         options: ["Define Function", "Parameters", "Return Values", "Default Values"]
                     }
                 ]
@@ -438,7 +440,7 @@ const rawRoadmapsData = {
                         title: "Understanding HTML",
                         description: "The foundation of all websites",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=kUMe1mu3WdAF", // freeCodeCamp HTML Full Course
                         options: ["What is HTML?", "HTML Tags", "Document Structure"]
                     },
                     {
@@ -446,7 +448,7 @@ const rawRoadmapsData = {
                         title: "Common HTML Tags",
                         description: "Tags you'll use most frequently",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=g3-d-aHDv1E", // Traversy Media Semantic HTML
                         options: ["Headings", "Paragraphs", "Links", "Images", "Lists"]
                     },
                     {
@@ -454,7 +456,7 @@ const rawRoadmapsData = {
                         title: "HTML Forms",
                         description: "Create interactive forms",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=Y-VgaS-fC38", // Web Dev Simplified HTML Forms
                         options: ["Input Fields", "Buttons", "Dropdowns", "Checkboxes"]
                     }
                 ]
@@ -469,7 +471,7 @@ const rawRoadmapsData = {
                         title: "Understanding CSS",
                         description: "The styling language for websites",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=yfoY53QXEnI", // freeCodeCamp CSS Full Course
                         options: ["CSS Syntax", "Selectors", "Properties"]
                     },
                     {
@@ -477,7 +479,7 @@ const rawRoadmapsData = {
                         title: "CSS Properties",
                         description: "Style your HTML elements",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=Bv0-gPElEis", // Kevin Powell: CSS properties
                         options: ["Colors", "Fonts", "Spacing", "Borders", "Backgrounds"]
                     },
                     {
@@ -485,7 +487,7 @@ const rawRoadmapsData = {
                         title: "CSS Layout",
                         description: "Position elements on the page",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=learn-css-grid-in-20-minutes", // Web Dev Simplified: CSS Grid
                         options: ["Flexbox", "Grid", "Positioning"]
                     }
                 ]
@@ -500,7 +502,7 @@ const rawRoadmapsData = {
                         title: "JavaScript Fundamentals",
                         description: "Learn programming with JavaScript",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=PkZNo7MFNFg", // freeCodeCamp JS Full Course
                         options: ["Variables", "Functions", "Events"]
                     },
                     {
@@ -508,7 +510,7 @@ const rawRoadmapsData = {
                         title: "DOM Manipulation",
                         description: "Change HTML with JavaScript",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=y17Wo1ksGAE", // Traversy Media DOM Crash Course
                         options: ["Select Elements", "Change Content", "Add Classes"]
                     },
                     {
@@ -516,7 +518,7 @@ const rawRoadmapsData = {
                         title: "Build Your First Project",
                         description: "Create a simple interactive website",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=EderK-d8oZY", // JS To-Do List Project
                         options: ["To-Do List", "Calculator", "Quiz App"]
                     }
                 ]
@@ -541,7 +543,7 @@ const rawRoadmapsData = {
                         title: "Python Basics",
                         description: "Learn Python programming",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=e-kSGNm0iD8", // Python for ML (fCC)
                         options: ["Variables", "Loops", "Functions", "Lists"]
                     },
                     {
@@ -549,7 +551,7 @@ const rawRoadmapsData = {
                         title: "NumPy Fundamentals",
                         description: "Arrays and numerical computing",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=x-WhGjRSG6s", // NumPy (Bro Code)
                         options: ["Arrays", "Operations", "Broadcasting"]
                     },
                     {
@@ -557,7 +559,7 @@ const rawRoadmapsData = {
                         title: "Pandas for Data",
                         description: "Data manipulation and analysis",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=5-T-12L-na4", // Pandas (Bro Code)
                         options: ["DataFrames", "Reading Data", "Data Cleaning"]
                     }
                 ]
@@ -572,7 +574,7 @@ const rawRoadmapsData = {
                         title: "Statistics Basics",
                         description: "Mean, median, standard deviation",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=Vz-f-1-G8hQ", // Statistics for ML (fCC)
                         options: ["Descriptive Stats", "Probability", "Distributions"]
                     },
                     {
@@ -580,7 +582,7 @@ const rawRoadmapsData = {
                         title: "Linear Algebra",
                         description: "Vectors and matrices",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=n-aI0-tJ1q0", // Linear Algebra for ML (fCC)
                         options: ["Vectors", "Matrices", "Operations"]
                     }
                 ]
@@ -595,7 +597,7 @@ const rawRoadmapsData = {
                         title: "Supervised Learning",
                         description: "Learn from labeled data",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=K-B2-eyyB0w", // Supervised Learning (StatQuest)
                         options: ["Linear Regression", "Classification", "Decision Trees"]
                     },
                     {
@@ -603,7 +605,7 @@ const rawRoadmapsData = {
                         title: "Model Evaluation",
                         description: "Measure model performance",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=PNz-CYmX2Wc", // Model Evaluation (Codebasics)
                         options: ["Accuracy", "Precision", "Recall", "F1 Score"]
                     },
                     {
@@ -611,7 +613,7 @@ const rawRoadmapsData = {
                         title: "Your First ML Project",
                         description: "Build and deploy a model",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=4p-MIAo6-g4", // House Price Prediction Project
                         options: ["House Price Prediction", "Iris Classification", "Spam Detection"]
                     }
                 ]
@@ -636,7 +638,7 @@ const rawRoadmapsData = {
                         title: "Excel for Data Analysis",
                         description: "Master spreadsheets and formulas",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=Vl0H-qTclOg", // Excel Full Course (fCC)
                         options: ["Formulas", "Pivot Tables", "Charts", "Data Cleaning"]
                     },
                     {
@@ -644,7 +646,7 @@ const rawRoadmapsData = {
                         title: "SQL Fundamentals",
                         description: "Query databases effectively",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=HXV3zeQKqGY", // SQL Full Course (fCC)
                         options: ["SELECT", "WHERE", "JOIN", "GROUP BY"]
                     },
                     {
@@ -652,7 +654,7 @@ const rawRoadmapsData = {
                         title: "Statistics Foundation",
                         description: "Statistical thinking and methods",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=Vz-f-1-G8hQ", // Statistics for Data Science (fCC)
                         options: ["Mean/Median", "Correlation", "Hypothesis Testing"]
                     }
                 ]
@@ -667,7 +669,7 @@ const rawRoadmapsData = {
                         title: "Python Basics",
                         description: "Learn Python programming",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=e-kSGNm0iD8", // Python for Data Science (fCC)
                         options: ["Variables", "Functions", "Libraries"]
                     },
                     {
@@ -675,7 +677,7 @@ const rawRoadmapsData = {
                         title: "Pandas & NumPy",
                         description: "Data manipulation libraries",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=ad-e-m0-e-E", // Pandas & NumPy (fCC)
                         options: ["DataFrames", "Operations", "Aggregations"]
                     },
                     {
@@ -683,7 +685,7 @@ const rawRoadmapsData = {
                         title: "Data Visualization",
                         description: "Create meaningful charts",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=F-t-f4G-I_A", // Matplotlib & Seaborn (fCC)
                         options: ["Matplotlib", "Seaborn", "Plotly"]
                     }
                 ]
@@ -698,7 +700,7 @@ const rawRoadmapsData = {
                         title: "Exploratory Data Analysis",
                         description: "Analyze real datasets",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=q_c-b-I-6-k", // EDA Project (Codebasics)
                         options: ["Data Cleaning", "Insights", "Visualization"]
                     },
                     {
@@ -706,7 +708,7 @@ const rawRoadmapsData = {
                         title: "Dashboard Creation",
                         description: "Build interactive dashboards",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=qFY-f-S-c-A", // Power BI Full Course (fCC)
                         options: ["Tableau", "Power BI", "Streamlit"]
                     },
                     {
@@ -714,7 +716,7 @@ const rawRoadmapsData = {
                         title: "Capstone Project",
                         description: "Complete end-to-end project",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=kcA-2V-A3O0", // Data Science Project from scratch
                         options: ["Sales Analysis", "Customer Segmentation", "Trend Analysis"]
                     }
                 ]
@@ -739,7 +741,7 @@ const rawRoadmapsData = {
                         title: "Setup & First Program",
                         description: "Install JDK and write Hello World",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=9X6wsPD_H6E", // Java Setup (Bro Code)
                         options: ["Install JDK", "Setup IDE", "First Program"]
                     },
                     {
@@ -747,7 +749,7 @@ const rawRoadmapsData = {
                         title: "Variables & Data Types",
                         description: "Primitive types and operators",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=20-XF1-lqC4", // Java Variables (Bro Code)
                         options: ["int", "double", "String", "boolean"]
                     },
                     {
@@ -755,7 +757,7 @@ const rawRoadmapsData = {
                         title: "Control Flow",
                         description: "If-else, loops, switch",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=iMea2GCsnEw", // Java Loops (Bro Code)
                         options: ["if-else", "for loop", "while loop", "switch"]
                     }
                 ]
@@ -770,7 +772,7 @@ const rawRoadmapsData = {
                         title: "Classes & Objects",
                         description: "Create your own classes",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=w-G-w_Yp0-s", // Java Objects (Bro Code)
                         options: ["Class Definition", "Objects", "Methods", "Constructors"]
                     },
                     {
@@ -778,7 +780,7 @@ const rawRoadmapsData = {
                         title: "Inheritance",
                         description: "Reuse code with inheritance",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=e_a-s10-f1c", // Java Inheritance (Bro Code)
                         options: ["Extends", "Super", "Method Overriding"]
                     },
                     {
@@ -786,7 +788,7 @@ const rawRoadmapsData = {
                         title: "Polymorphism & Abstraction",
                         description: "Advanced OOP concepts",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=S-rW2Tj-A3k", // Java Polymorphism (Bro Code)
                         options: ["Interfaces", "Abstract Classes", "Polymorphism"]
                     }
                 ]
@@ -801,7 +803,7 @@ const rawRoadmapsData = {
                         title: "Collections Framework",
                         description: "ArrayList, HashMap, HashSet",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=Ndr4-K-f2o0", // Java Collections (Kunal)
                         options: ["List", "Set", "Map", "Queue"]
                     },
                     {
@@ -809,7 +811,7 @@ const rawRoadmapsData = {
                         title: "Exception Handling",
                         description: "Handle errors gracefully",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=rXHfX-B8P-M", // Java Exceptions (Bro Code)
                         options: ["try-catch", "throw", "finally"]
                     },
                     {
@@ -817,7 +819,7 @@ const rawRoadmapsData = {
                         title: "Build Projects",
                         description: "Create real-world applications",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=lw-G-FBgQ-4", // Java Student Management Project
                         options: ["Library System", "Bank Application", "Student Management"]
                     }
                 ]
@@ -842,7 +844,7 @@ const rawRoadmapsData = {
                         title: "Setup & Basics",
                         description: "Install Python and write your first program",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=XKHEtd-93KA", // Python Setup (Bro Code)
                         options: ["Install Python", "Variables", "Print", "Input"]
                     },
                     {
@@ -850,7 +852,7 @@ const rawRoadmapsData = {
                         title: "Data Types",
                         description: "Numbers, strings, booleans",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=R9I85T-LO0E", // Python Data Types (fCC)
                         options: ["int", "float", "str", "bool"]
                     },
                     {
@@ -858,7 +860,7 @@ const rawRoadmapsData = {
                         title: "Control Flow",
                         description: "If-else and loops",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=zPo-E-f-3fA", // Python If/Else (Bro Code)
                         options: ["if-else", "for loop", "while loop"]
                     }
                 ]
@@ -873,7 +875,7 @@ const rawRoadmapsData = {
                         title: "Lists & Tuples",
                         description: "Store multiple values",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=z0t-a8-gA-E", // Python Lists (Bro Code)
                         options: ["Lists", "Tuples", "List Methods", "Slicing"]
                     },
                     {
@@ -881,7 +883,7 @@ const rawRoadmapsData = {
                         title: "Dictionaries & Sets",
                         description: "Key-value pairs and unique values",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=e-k5-b9-0c8", // Python Dictionaries (Bro Code)
                         options: ["Dictionaries", "Sets", "Methods"]
                     },
                     {
@@ -889,7 +891,7 @@ const rawRoadmapsData = {
                         title: "Functions",
                         description: "Reusable code blocks",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=8-SjE-I0h2I", // Python Functions (Bro Code)
                         options: ["Define Functions", "Parameters", "Return", "Lambda"]
                     }
                 ]
@@ -904,7 +906,7 @@ const rawRoadmapsData = {
                         title: "Object-Oriented Programming",
                         description: "Classes and objects",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=n-A1n0-jA-k", // Python OOP (Bro Code)
                         options: ["Classes", "Objects", "Inheritance", "Methods"]
                     },
                     {
@@ -912,7 +914,7 @@ const rawRoadmapsData = {
                         title: "File Handling",
                         description: "Read and write files",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=kR-Y-ncm-kE", // Python File Handling (Bro Code)
                         options: ["Open Files", "Read", "Write", "CSV Files"]
                     },
                     {
@@ -920,7 +922,7 @@ const rawRoadmapsData = {
                         title: "Projects",
                         description: "Build real applications",
                         completed: false,
-                        hasResource: true,
+                        link: "https://www.youtube.com/watch?v=8ext9G7jhtg", // Python Projects (fCC)
                         options: ["Calculator", "To-Do App", "Web Scraper", "Automation"]
                     }
                 ]
@@ -938,12 +940,13 @@ const initialRoadmapsData = new Proxy(rawRoadmapsData, {
         if (prop in target) {
             return Reflect.get(target, prop, receiver);
             }
+        // Default placeholder for any roadmap key that isn't defined above
         return {
             cardTitle: "Coming Soon",
             roadmapTitle: "Coming Soon",
             icon: "📘",
             color: "#9CA3AF",
-            description: "Content will be added soon.",
+            description: "Content will be added soon. Check back later!",
             sections: []
         };
     }

@@ -4,23 +4,22 @@ package handler
 import (
 	"btechmap-backend/database"
 	"btechmap-backend/model"
-	"encoding/json" 
+	"encoding/json" // We need this
 	"log"           
 
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/datatypes"
+	// "gorm.io/datatypes"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
 // calculateScore calculates a score based on progress
-// --- UPDATED SCORING LOGIC ---
 func calculateScore(progressData *model.ProgressData) int {
 	badgeCount := len(progressData.Badges)
 	quizCount := len(progressData.QuizProgress)
 	stepCount := len(progressData.CompletedSteps)
 
-	// NEW LOGIC:
+	// Scoring logic:
 	// 10 points per badge
 	// 5 points per passed quiz
 	// 1 point per completed step
@@ -48,35 +47,36 @@ func GetProgress(c *fiber.Ctx) error {
 }
 
 
-// SaveProgress handler (This function is now correct)
+// SaveProgress handler (--- THIS IS THE FIXED FUNCTION ---)
 func SaveProgress(c *fiber.Ctx) error {
 	userID := c.Locals("userID").(uint)
 
-	var progressData datatypes.JSON
-	if err := c.BodyParser(&progressData); err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
-	}
-
-	// --- Calculate Score ---
+    // --- START OF FIX ---
+	// 1. Get the raw request body as bytes
+	body := c.Body()
+	
+	// 2. Unmarshal the body bytes into our ProgressData struct for scoring
 	var parsedData model.ProgressData
-	if err := json.Unmarshal(progressData, &parsedData); err != nil {
+	if err := json.Unmarshal(body, &parsedData); err != nil {
+		// If parsing fails, log it but don't fail the entire save
 		log.Printf("Warning: Failed to parse progress JSON for scoring: %v", err)
 	} else {
-		// Calculation will now work correctly
+		// 3. Calculation will now work correctly
 		totalScore := calculateScore(&parsedData)
 		
-		// Update the User table
+		// 4. Update the User table with the new score
 		if err := database.DB.Model(&model.User{}).Where("id = ?", userID).Update("total_score", totalScore).Error; err != nil {
 			log.Printf("Warning: Failed to update total_score for user %d: %v", userID, err)
 		}
 	}
-	// --- END: Calculate Score ---
+	// --- END OF FIX ---
 
 
-	// Save the raw JSON to UserProgress (as before)
+	// 5. Save the raw body bytes to the UserProgress table
+	// We use the raw 'body' variable here
 	progress := model.UserProgress{
 		UserID: userID,
-		Data:   progressData,
+		Data:   body, // body is already []byte, which is what datatypes.JSON expects
 	}
 
 	if err := database.DB.Clauses(clause.OnConflict{
