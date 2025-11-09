@@ -1,18 +1,64 @@
+// Updated ProfilePage.jsx - Replace your existing ProfilePage.jsx
 import React, { useState } from 'react';
-import { User, Mail, Calendar, Award, BookOpen, Target, Edit2, Save, X } from 'lucide-react';
+import { User, Mail, Calendar, Award, BookOpen, Target, Edit2, Save, X, Trophy } from 'lucide-react';
 import { getUser } from '../authService.js';
 
-const ProfilePage = ({ roadmapsData }) => {
+const BadgeCard = ({ badge, earned, roadmapKey }) => {
+  const badgeDefinitions = {
+    academics: { name: "Academic Excellence", icon: "🎓", color: "#FF6B6B" },
+    gate: { name: "GATE Master", icon: "🎯", color: "#4ECDC4" },
+    dsa: { name: "DSA Expert", icon: "🧠", color: "#B24BF3" },
+    webdev: { name: "Web Developer", icon: "💻", color: "#00FFA3" },
+    aiml: { name: "AI Specialist", icon: "🤖", color: "#FF6B9D" },
+    datascience: { name: "Data Scientist", icon: "📊", color: "#FFA500" },
+    java: { name: "Java Master", icon: "☕", color: "#E07A5F" },
+    python: { name: "Python Pro", icon: "🐍", color: "#3776AB" }
+  };
+
+  const badgeInfo = badgeDefinitions[roadmapKey] || { name: "Badge", icon: "🏆", color: "#FFD700" };
+
+  return (
+    <div className={`relative p-6 rounded-xl border-2 transition-all ${
+      earned 
+        ? 'bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border-yellow-400' 
+        : 'bg-gray-800 border-gray-700 opacity-50'
+    }`}>
+      <div className="text-center">
+        <div className="text-6xl mb-3">{badgeInfo.icon}</div>
+        <h3 className="font-bold text-white mb-1">{badgeInfo.name}</h3>
+        <p className="text-xs text-gray-400 mb-2">
+          {earned 
+            ? `Earned on ${new Date(badge.date).toLocaleDateString()}` 
+            : 'Complete all requirements to unlock'}
+        </p>
+        {earned && (
+          <div className="flex items-center justify-center gap-1 text-yellow-400 text-sm">
+            <Trophy size={16} />
+            <span>{badge.score}/{badge.total} in Final Quiz</span>
+          </div>
+        )}
+      </div>
+      {!earned && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-60 rounded-xl">
+          <span className="text-gray-400 font-bold">🔒 Locked</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const ProfilePage = ({ roadmapsData, badges, quizProgress }) => {
     const user = getUser();
     const [isEditing, setIsEditing] = useState(false);
     const [editedName, setEditedName] = useState(user?.name || '');
 
-    // Calculate total progress across all roadmaps
     const calculateTotalStats = () => {
         let totalSteps = 0;
         let completedSteps = 0;
         let totalRoadmaps = 0;
         let activeRoadmaps = 0;
+        let totalQuizzesPassed = 0;
+        let totalBadges = 0;
 
         Object.keys(roadmapsData).forEach(key => {
             const roadmap = roadmapsData[key];
@@ -26,18 +72,29 @@ const ProfilePage = ({ roadmapsData }) => {
             }
         });
 
+        // Count passed quizzes
+        Object.values(quizProgress).forEach(quiz => {
+            if (quiz.passed) totalQuizzesPassed++;
+        });
+
+        // Count earned badges
+        Object.values(badges).forEach(badge => {
+            if (badge.earned) totalBadges++;
+        });
+
         return {
             totalSteps,
             completedSteps,
             totalRoadmaps,
             activeRoadmaps,
+            totalQuizzesPassed,
+            totalBadges,
             progressPercentage: totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0
         };
     };
 
     const stats = calculateTotalStats();
 
-    // Get roadmap progress details
     const getRoadmapProgress = () => {
         return Object.keys(roadmapsData)
             .filter(key => {
@@ -56,7 +113,8 @@ const ProfilePage = ({ roadmapsData }) => {
                     color: roadmap.color,
                     completed: roadmap.completedSteps,
                     total: roadmap.totalSteps,
-                    progress
+                    progress,
+                    hasBadge: badges[key]?.earned
                 };
             })
             .sort((a, b) => b.progress - a.progress);
@@ -65,7 +123,6 @@ const ProfilePage = ({ roadmapsData }) => {
     const activeRoadmaps = getRoadmapProgress();
 
     const handleSaveName = () => {
-        // Update user name in localStorage
         const currentUser = getUser();
         if (currentUser) {
             currentUser.name = editedName;
@@ -91,7 +148,6 @@ const ProfilePage = ({ roadmapsData }) => {
         );
     }
 
-    // Format date
     const joinDate = new Date().toLocaleDateString('en-US', { 
         year: 'numeric', 
         month: 'long', 
@@ -100,10 +156,9 @@ const ProfilePage = ({ roadmapsData }) => {
 
     return (
         <div className="max-w-5xl mx-auto">
-            {/* Profile Header Card */}
+            {/* Profile Header */}
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 mb-6">
                 <div className="flex items-start gap-6">
-                    {/* Avatar */}
                     <div className="relative">
                         <div className="w-24 h-24 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-lg">
                             {user.name.charAt(0).toUpperCase()}
@@ -111,7 +166,6 @@ const ProfilePage = ({ roadmapsData }) => {
                         <div className="absolute -bottom-2 -right-2 bg-green-500 w-8 h-8 rounded-full border-4 border-gray-900"></div>
                     </div>
 
-                    {/* User Info */}
                     <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
                             {isEditing ? (
@@ -160,7 +214,6 @@ const ProfilePage = ({ roadmapsData }) => {
                             </div>
                         </div>
 
-                        {/* Quick Stats */}
                         <div className="flex gap-4 mt-4">
                             <div className="bg-gray-800 rounded-lg px-4 py-2">
                                 <div className="text-2xl font-bold text-cyan-400">{stats.progressPercentage}%</div>
@@ -171,8 +224,8 @@ const ProfilePage = ({ roadmapsData }) => {
                                 <div className="text-xs text-gray-400">Steps Completed</div>
                             </div>
                             <div className="bg-gray-800 rounded-lg px-4 py-2">
-                                <div className="text-2xl font-bold text-orange-400">{stats.activeRoadmaps}</div>
-                                <div className="text-xs text-gray-400">Active Roadmaps</div>
+                                <div className="text-2xl font-bold text-yellow-400">{stats.totalBadges}</div>
+                                <div className="text-xs text-gray-400">Badges Earned</div>
                             </div>
                         </div>
                     </div>
@@ -180,15 +233,15 @@ const ProfilePage = ({ roadmapsData }) => {
             </div>
 
             {/* Statistics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
                 <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
                     <div className="flex items-center gap-3 mb-3">
                         <div className="p-3 bg-cyan-500 bg-opacity-20 rounded-lg">
                             <BookOpen size={24} className="text-cyan-400" />
                         </div>
                         <div>
-                            <div className="text-2xl font-bold">{stats.totalRoadmaps}</div>
-                            <div className="text-sm text-gray-400">Total Roadmaps</div>
+                            <div className="text-2xl font-bold">{stats.activeRoadmaps}</div>
+                            <div className="text-sm text-gray-400">Active Roadmaps</div>
                         </div>
                     </div>
                 </div>
@@ -200,21 +253,51 @@ const ProfilePage = ({ roadmapsData }) => {
                         </div>
                         <div>
                             <div className="text-2xl font-bold">{stats.completedSteps}</div>
-                            <div className="text-sm text-gray-400">Steps Completed</div>
+                            <div className="text-sm text-gray-400">Steps Done</div>
                         </div>
                     </div>
                 </div>
 
                 <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="p-3 bg-orange-500 bg-opacity-20 rounded-lg">
-                            <Award size={24} className="text-orange-400" />
+                        <div className="p-3 bg-purple-500 bg-opacity-20 rounded-lg">
+                            <Award size={24} className="text-purple-400" />
                         </div>
                         <div>
-                            <div className="text-2xl font-bold">{stats.totalSteps - stats.completedSteps}</div>
-                            <div className="text-sm text-gray-400">Steps Remaining</div>
+                            <div className="text-2xl font-bold">{stats.totalQuizzesPassed}</div>
+                            <div className="text-sm text-gray-400">Quizzes Passed</div>
                         </div>
                     </div>
+                </div>
+
+                <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                    <div className="flex items-center gap-3 mb-3">
+                        <div className="p-3 bg-yellow-500 bg-opacity-20 rounded-lg">
+                            <Trophy size={24} className="text-yellow-400" />
+                        </div>
+                        <div>
+                            <div className="text-2xl font-bold">{stats.totalBadges}</div>
+                            <div className="text-sm text-gray-400">Badges Earned</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Badges Section */}
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-6">
+                <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                    <Trophy size={24} className="text-yellow-400" />
+                    Your Badges
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {['academics', 'gate', 'dsa', 'webdev', 'aiml', 'datascience', 'java', 'python'].map(key => (
+                        <BadgeCard
+                            key={key}
+                            badge={badges[key]}
+                            earned={badges[key]?.earned || false}
+                            roadmapKey={key}
+                        />
+                    ))}
                 </div>
             </div>
 
@@ -238,7 +321,12 @@ const ProfilePage = ({ roadmapsData }) => {
                                     <div className="flex items-center gap-3">
                                         <span className="text-2xl">{roadmap.icon}</span>
                                         <div>
-                                            <h3 className="font-semibold">{roadmap.title}</h3>
+                                            <div className="flex items-center gap-2">
+                                                <h3 className="font-semibold">{roadmap.title}</h3>
+                                                {roadmap.hasBadge && (
+                                                    <Trophy size={16} className="text-yellow-400" />
+                                                )}
+                                            </div>
                                             <p className="text-sm text-gray-400">
                                                 {roadmap.completed} / {roadmap.total} steps
                                             </p>
@@ -251,7 +339,6 @@ const ProfilePage = ({ roadmapsData }) => {
                                     </div>
                                 </div>
 
-                                {/* Progress Bar */}
                                 <div className="w-full bg-gray-700 rounded-full h-3">
                                     <div
                                         className="h-3 rounded-full transition-all duration-300"
@@ -265,49 +352,6 @@ const ProfilePage = ({ roadmapsData }) => {
                         ))}
                     </div>
                 )}
-            </div>
-
-            {/* Achievements Section (Future Feature) */}
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mt-6">
-                <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                    <Award size={24} className="text-yellow-400" />
-                    Achievements
-                </h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {stats.completedSteps >= 10 && (
-                        <div className="bg-gray-800 rounded-lg p-4 text-center">
-                            <div className="text-3xl mb-2">🎯</div>
-                            <div className="text-sm font-semibold">First Steps</div>
-                            <div className="text-xs text-gray-400">Complete 10 steps</div>
-                        </div>
-                    )}
-                    {stats.completedSteps >= 50 && (
-                        <div className="bg-gray-800 rounded-lg p-4 text-center">
-                            <div className="text-3xl mb-2">🚀</div>
-                            <div className="text-sm font-semibold">On Fire</div>
-                            <div className="text-xs text-gray-400">Complete 50 steps</div>
-                        </div>
-                    )}
-                    {stats.completedSteps >= 100 && (
-                        <div className="bg-gray-800 rounded-lg p-4 text-center">
-                            <div className="text-3xl mb-2">⭐</div>
-                            <div className="text-sm font-semibold">Century</div>
-                            <div className="text-xs text-gray-400">Complete 100 steps</div>
-                        </div>
-                    )}
-                    {stats.activeRoadmaps >= 3 && (
-                        <div className="bg-gray-800 rounded-lg p-4 text-center">
-                            <div className="text-3xl mb-2">🎓</div>
-                            <div className="text-sm font-semibold">Multi-tasker</div>
-                            <div className="text-xs text-gray-400">Active in 3 roadmaps</div>
-                        </div>
-                    )}
-                    {(stats.completedSteps < 10 && stats.activeRoadmaps < 3) && (
-                        <div className="col-span-2 md:col-span-4 text-center py-8 text-gray-400">
-                            <p>Complete more steps to unlock achievements! 🏆</p>
-                        </div>
-                    )}
-                </div>
             </div>
         </div>
     );

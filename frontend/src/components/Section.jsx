@@ -1,11 +1,13 @@
+// Updated Section.jsx - Replace your existing Section.jsx with this
 import React, { useState } from 'react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, Award } from 'lucide-react';
 import StepRow from './Steprow.jsx';
 
-const Section = ({ section, roadmapColor, onToggleStep }) => {
+const Section = ({ section, roadmapColor, onToggleStep, onStartQuiz, quizStatus }) => {
     const [expanded, setExpanded] = useState(true);
     const progress = section.steps.filter(s => s.completed).length;
     const total = section.steps.length;
+    const isPassed = quizStatus?.passed;
 
     return (
         <div className="bg-gray-900 border border-gray-800 rounded-xl mb-6 overflow-hidden">
@@ -13,8 +15,27 @@ const Section = ({ section, roadmapColor, onToggleStep }) => {
                 <div className="flex items-center gap-3">
                     {expanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
                     <span className="text-lg font-semibold">{section.title}</span>
+                    {isPassed && (
+                        <div className="flex items-center gap-1 text-green-400 text-xs bg-green-400 bg-opacity-10 px-2 py-1 rounded-full">
+                            <Award size={14} />
+                            <span>Quiz Passed</span>
+                        </div>
+                    )}
                 </div>
                 <div className="flex items-center gap-4">
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onStartQuiz(section);
+                        }}
+                        className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${
+                            isPassed
+                                ? 'bg-green-500 hover:bg-green-600'
+                                : 'bg-purple-500 hover:bg-purple-600'
+                        }`}
+                    >
+                        {isPassed ? 'Retake Quiz' : 'Take Quiz'}
+                    </button>
                     <div className="flex items-end gap-1.5 h-8">
                         {Array.from({ length: total }).map((_, index) => (
                             <div
