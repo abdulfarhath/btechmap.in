@@ -1,4 +1,5 @@
-// Updated App.jsx
+// src/App.jsx
+
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Sidebar from './components/Sidebar.jsx';
 import ProgressRing from './components/ProcessRing.jsx';
@@ -7,20 +8,19 @@ import Section from './components/Section.jsx';
 import Dashboard from './components/Dashboard.jsx';
 import AuthModal from './components/AuthModal.jsx';
 import ProfilePage from './components/ProfilePage.jsx';
+import LeaderboardPage from './components/LeaderboardPage.jsx'; // For Leaderboard
 import Quiz from './components/Quiz.jsx';
 import FinalQuiz from './components/FinalQuiz.jsx';
-import { getUser, getProgress, saveProgress } from './authService.js'; // NEW: Import progress functions
+import { getUser, getProgress, saveProgress } from './authService.js'; // For DB persistence
 import { sectionQuizData, finalQuizData } from './QuizData.js';
 import { Trophy } from 'lucide-react';
-import { debounce } from 'lodash'; // NEW: Import debounce
+import { debounce } from 'lodash'; // For debouncing saves
 
-// NEW: Install lodash for debouncing: npm install lodash
-
-// NEW: This function now takes completedSteps to hydrate the roadmaps
-
-
+// UPDATED: This function now hydrates roadmap state from completedSteps
 const calculateProgress = (data, completedSteps) => {
-  const updatedData = { ...data };
+  // Create a deep copy to avoid mutating the original data
+  const updatedData = JSON.parse(JSON.stringify(data)); 
+  
   Object.keys(updatedData).forEach(key => {
     const roadmap = updatedData[key];
     if (!roadmap || !roadmap.sections) return;
@@ -31,8 +31,10 @@ const calculateProgress = (data, completedSteps) => {
     roadmap.sections.forEach(section => {
       totalSteps += section.steps.length;
       section.steps.forEach(step => {
-        // NEW: Construct a unique ID for each step
+        // Construct the unique ID for each step
         const stepId = `${key}-${section.id}-${step.id}`;
+        
+        // Hydrate the 'completed' status from our state
         if (completedSteps[stepId]) {
           step.completed = true;
           completedStepsCount++;
@@ -53,11 +55,12 @@ export default function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   const [showAuth, setShowAuth] = useState(null);
   const [user, setUser] = useState(null);
-  // Add these two lines back:
+  
+  // Quiz modal states
   const [showQuiz, setShowQuiz] = useState(null);
   const [showFinalQuiz, setShowFinalQuiz] = useState(null);
-
-  // NEW: All progress state is now managed here
+  
+  // All user progress is loaded from localStorage first
   const [completedSteps, setCompletedSteps] = useState(() => {
     const saved = localStorage.getItem('completedSteps');
     return saved ? JSON.parse(saved) : {};
@@ -73,27 +76,26 @@ export default function App() {
     return saved ? JSON.parse(saved) : {};
   });
 
-  // NEW: State to prevent saving while loading
+  // State to prevent saving while loading
   const [isLoading, setIsLoading] = useState(true);
 
-  // NEW: Hydrate roadmapsData based on completedSteps state
-  // useMemo will recalculate this only when completedSteps changes
+  // Memoize roadmapsData: it will only recalculate when completedSteps changes
   const roadmapsData = useMemo(() => {
     return calculateProgress(initialRoadmapsData, completedSteps);
   }, [completedSteps]);
   
   
-  // NEW: Debounced save function to avoid spamming the API
+  // Debounced save function to avoid spamming the API
   const debouncedSave = useCallback(
     debounce((progress) => {
-      if (getUser()) {
+      if (getUser()) { // Only save if user is logged in
         saveProgress(progress);
       }
     }, 1000), // Save 1 second after the last change
     []
   );
 
-  // NEW: Single function to save all progress
+  // Single function to save all progress to state, localStorage, and DB
   const saveAllProgress = (steps, quizzes, userBadges) => {
     // 1. Save to localStorage (for guest/instant UI)
     localStorage.setItem('completedSteps', JSON.stringify(steps));
@@ -117,7 +119,7 @@ export default function App() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  // NEW: Load user and their progress on app start
+  // Load user and their progress on app start
   useEffect(() => {
     const userData = getUser();
     if (userData) {
@@ -128,6 +130,7 @@ export default function App() {
     }
   }, []);
 
+  // Fetches progress from the database
   const loadUserProgress = async () => {
     setIsLoading(true);
     const progress = await getProgress();
@@ -145,16 +148,17 @@ export default function App() {
     setIsLoading(false);
   };
 
+  // Called when a checkbox is toggled
   const handleToggleStep = (sectionId, stepId) => {
-    // NEW: Use the unique stepId format
+    // Use the unique stepId format
     const uniqueStepId = `${activeRoadmap}-${sectionId}-${stepId}`;
     
     setCompletedSteps(prev => {
       const newSteps = { ...prev };
       if (newSteps[uniqueStepId]) {
-        delete newSteps[uniqueStepId];
+        delete newSteps[uniqueStepId]; // Uncheck
       } else {
-        newSteps[uniqueStepId] = true;
+        newSteps[uniqueStepId] = true; // Check
       }
       
       // Save all progress
@@ -163,6 +167,7 @@ export default function App() {
     });
   };
 
+  // Called from AuthModal on successful login/signup
   const handleAuthSuccess = () => {
     const userData = getUser();
     setUser(userData);
@@ -173,6 +178,7 @@ export default function App() {
     setShowQuiz(section);
   };
 
+  // Called from Quiz modal
   const handleQuizComplete = (sectionId, passed, score, total) => {
     let newQuizProgress = { ...quizProgress };
     if (passed) {
@@ -192,6 +198,7 @@ export default function App() {
     setShowFinalQuiz(data);
   };
 
+  // Called from FinalQuiz modal
   const handleFinalQuizComplete = (passed, score, total) => {
     let newBadges = { ...badges };
     if (passed) {
@@ -210,15 +217,15 @@ export default function App() {
     saveAllProgress(completedSteps, quizProgress, newBadges);
   };
 
-  // Check if user can take final quiz
+  // Checks if final quiz can be unlocked
   const canTakeFinalQuiz = () => {
     const data = roadmapsData[activeRoadmap];
     if (!data || !data.sections) return false;
     
-    // Check if all steps are completed
+    // 1. Check if all steps are completed
     const allStepsCompleted = data.completedSteps === data.totalSteps;
     
-    // Check if all section quizzes are passed
+    // 2. Check if all section quizzes are passed
     const allQuizzesPassed = data.sections.every(section => {
       const quizKey = `${activeRoadmap}-${section.id}`;
       return quizProgress[quizKey]?.passed;
@@ -276,19 +283,17 @@ export default function App() {
         setActiveRoadmap={setActiveRoadmap}
         setShowAuth={setShowAuth}
         currentUser={user}
-        // NEW: Pass badges to Sidebar if it needs it (as per your original code)
         badges={badges} 
       />
 
       {/* Main Content */}
-      <div className="flex-1 ml-64 p-8 bg-black max-w-[calc(100vw-260px)] bg-black no-scrollbar overflow-y-auto">
+      <div className="flex-1 ml-64 p-8 bg-black max-w-[calc(100vw-260px)] bg-black no-scrollbar overflow-y-auto h-screen">
         <header className="mb-8 flex justify-between items-start">
-          {/* ... (Header content remains the same) ... */}
-           <div>
+          <div>
             {activeRoadmap === 'dashboard' ? (
               <>
                 <h1 className="text-3xl font-bold mb-4 flex items-center gap-3">
-                  {/* ... */} Dashboard
+                  {/* (icon) */} Dashboard
                 </h1>
                 {user && (
                   <p className="text-gray-400">
@@ -298,7 +303,11 @@ export default function App() {
               </>
             ) : activeRoadmap === 'profile' ? (
               <h1 className="text-3xl font-bold mb-4 flex items-center gap-3">
-                {/* ... */} Profile
+                {/* (icon) */} Profile
+              </h1>
+            ) : activeRoadmap === 'leaderboard' ? (
+               <h1 className="text-3xl font-bold mb-4 flex items-center gap-3">
+                {/* (icon) */} Leaderboard
               </h1>
             ) : (
               <>
@@ -321,12 +330,19 @@ export default function App() {
           </button>
         </header>
 
+        {/* Page Content */}
         {activeRoadmap === 'dashboard' ? (
           <Dashboard onSelectRoadmap={setActiveRoadmap} roadmapsData={roadmapsData} badges={badges} />
+        
         ) : activeRoadmap === 'profile' ? (
           <ProfilePage roadmapsData={roadmapsData} badges={badges} quizProgress={quizProgress} />
+        
+        ) : activeRoadmap === 'leaderboard' ? (
+          <LeaderboardPage />
+
         ) : (
           <>
+            {/* Roadmap Progress Header */}
             <div
               className={`flex gap-8 border rounded-xl p-8 my-8 items-center transition-colors duration-300 ${
                 theme === 'dark'
@@ -334,7 +350,6 @@ export default function App() {
                   : 'bg-white border-gray-300'
               }`}
             >
-              {/* ... (ProgressRing content remains the same) ... */}
               <div className="flex items-center gap-8">
                 <ProgressRing progress={progressPercent} color={data.color} />
                 <div className="flex-1"></div>
@@ -352,7 +367,6 @@ export default function App() {
             {/* Final Quiz Section */}
             <div className="mb-8 bg-gradient-to-br from-gray-900 to-gray-800 border-2 border-yellow-500 rounded-xl p-6">
               <div className="flex justify-between items-center">
-                {/* ... (Final Quiz content remains the same) ... */}
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <Trophy size={24} className="text-yellow-400" />
@@ -396,6 +410,7 @@ export default function App() {
               </div>
             </div>
 
+            {/* Sections */}
             <div>
               {data.sections.map(section => {
                 const quizKey = `${activeRoadmap}-${section.id}`;

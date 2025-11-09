@@ -19,9 +19,10 @@ func Signup(c *fiber.Ctx) error {
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
 	}
-
-	if req.Email == "" || req.Password == "" || req.Name == "" {
-		return c.Status(400).JSON(fiber.Map{"error": "Name, email and password are required"})
+    
+    // UPDATED: Added College
+	if req.Email == "" || req.Password == "" || req.Name == "" || req.College == "" {
+		return c.Status(400).JSON(fiber.Map{"error": "Name, email, password, and college are required"})
 	}
 
 	var existingUser model.User
@@ -38,6 +39,8 @@ func Signup(c *fiber.Ctx) error {
 		Name:     req.Name,
 		Email:    req.Email,
 		Password: string(hashedPassword),
+		College:  req.College,  // NEW
+		TotalScore: 0,         // NEW
 	}
 
 	if err := database.DB.Create(&user).Error; err != nil {
@@ -54,11 +57,14 @@ func Signup(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Failed to generate token"})
 	}
-
+    
+    // UPDATED: Populate all user fields in response
 	response := model.AuthResponse{Token: token}
 	response.User.ID = user.ID
 	response.User.Name = user.Name
 	response.User.Email = user.Email
+	response.User.College = user.College
+	response.User.TotalScore = user.TotalScore
 
 	return c.Status(201).JSON(response)
 }
@@ -83,11 +89,14 @@ func Login(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": "Failed to generate token"})
 	}
-
+    
+    // UPDATED: Populate all user fields in response
 	response := model.AuthResponse{Token: token}
 	response.User.ID = user.ID
 	response.User.Name = user.Name
 	response.User.Email = user.Email
+	response.User.College = user.College
+	response.User.TotalScore = user.TotalScore
 
 	return c.JSON(response)
 }
@@ -100,11 +109,14 @@ func GetMe(c *fiber.Ctx) error {
 	if err := database.DB.First(&user, userID).Error; err != nil {
 		return c.Status(404).JSON(fiber.Map{"error": "User not found"})
 	}
-
+    
+    // UPDATED: Return all user fields
 	return c.JSON(fiber.Map{
 		"id":    user.ID,
 		"name":  user.Name,
 		"email": user.Email,
+		"college": user.College,
+		"total_score": user.TotalScore,
 	})
 }
 

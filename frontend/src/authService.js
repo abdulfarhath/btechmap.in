@@ -1,8 +1,8 @@
 // src/authService.js
 
-// --- Auth Functions ---
-
 const API_URL = 'http://localhost:8080/api';
+
+// --- Auth Functions ---
 
 export const login = async (email, password) => {
     const response = await fetch(`${API_URL}/login`, {
@@ -25,11 +25,12 @@ export const login = async (email, password) => {
     return data;
 };
 
-export const signup = async (name, email, password) => {
+export const signup = async (name, email, password, college) => {
     const response = await fetch(`${API_URL}/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
+        // Updated to send all fields
+        body: JSON.stringify({ name, email, password, college }), 
     });
 
     if (!response.ok) {
@@ -54,6 +55,7 @@ export const logout = () => {
     localStorage.removeItem('completedSteps');
     localStorage.removeItem('quizProgress');
     localStorage.removeItem('badges');
+    // We can't use window.location.reload() here, App.jsx must handle state
 };
 
 export const isAuthenticated = () => {
@@ -70,7 +72,7 @@ export const getToken = () => {
 };
 
 
-// --- NEW! Progress Functions ---
+// --- Progress Functions ---
 
 const getAuthHeaders = () => {
     const token = getToken();
@@ -82,6 +84,7 @@ const getAuthHeaders = () => {
 
 export const getProgress = async () => {
     if (!isAuthenticated()) {
+        // Return default empty state for guests
         return { completedSteps: {}, quizProgress: {}, badges: {} };
     }
 
@@ -99,12 +102,13 @@ export const getProgress = async () => {
 
     } catch (error) {
         console.error('Error fetching progress:', error);
+        // Return default empty state on error
         return { completedSteps: {}, quizProgress: {}, badges: {} };
     }
 };
 
 export const saveProgress = async (progress) => {
-    if (!isAuthenticated()) return;
+    if (!isAuthenticated()) return; // Don't save for guests
 
     try {
         await fetch(`${API_URL}/progress`, {

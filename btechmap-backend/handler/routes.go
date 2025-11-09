@@ -20,6 +20,9 @@ func SetupRoutes(app *fiber.App) {
 	// Progress routes
 	api.Get("/progress", middleware.AuthMiddleware, GetProgress)
 	api.Post("/progress", middleware.AuthMiddleware, SaveProgress)
+    
+	// NEW: Leaderboard route (public, no auth needed)
+	api.Get("/leaderboard", GetLeaderboard)
 
 	// Health check
 	api.Get("/health", func(c *fiber.Ctx) error {

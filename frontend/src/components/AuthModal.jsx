@@ -1,3 +1,5 @@
+// src/components/AuthModal.jsx
+
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { login, signup } from '../authService.js';
@@ -7,7 +9,8 @@ const AuthModal = ({ mode, onClose, onSuccess }) => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        password: ''
+        password: '',
+        college: '', // Added for signup
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -30,12 +33,14 @@ const AuthModal = ({ mode, onClose, onSuccess }) => {
             if (isLogin) {
                 result = await login(formData.email, formData.password);
             } else {
-                if (!formData.name) {
-                    setError('Name is required');
+                // Check for all required signup fields
+                if (!formData.name || !formData.college) {
+                    setError('Name and College are required');
                     setLoading(false);
                     return;
                 }
-                result = await signup(formData.name, formData.email, formData.password);
+                // Pass all fields to the signup function
+                result = await signup(formData.name, formData.email, formData.password, formData.college);
             }
             
             console.log('Authentication successful:', result);
@@ -43,7 +48,7 @@ const AuthModal = ({ mode, onClose, onSuccess }) => {
             // Call onSuccess callback to update parent component
             onSuccess();
             
-            // Close modal after a brief delay to ensure state updates
+            // Close modal after a brief delay
             setTimeout(() => {
                 onClose();
             }, 100);
@@ -57,7 +62,8 @@ const AuthModal = ({ mode, onClose, onSuccess }) => {
     const toggleMode = () => {
         setIsLogin(!isLogin);
         setError('');
-        setFormData({ name: '', email: '', password: '' });
+        // Reset all form fields, including college
+        setFormData({ name: '', email: '', password: '', college: '' });
     };
 
     return (
@@ -94,20 +100,38 @@ const AuthModal = ({ mode, onClose, onSuccess }) => {
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {!isLogin && (
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-300 mb-2">
-                                Name
-                            </label>
-                            <input
-                                type="text"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-400 transition-colors"
-                                placeholder="Enter your name"
-                                required={!isLogin}
-                            />
-                        </div>
+                        <>
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-300 mb-2">
+                                    Name
+                                </label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-400 transition-colors"
+                                    placeholder="Enter your name"
+                                    required={!isLogin}
+                                />
+                            </div>
+
+                            {/* --- NEW COLLEGE FIELD --- */}
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-300 mb-2">
+                                    College
+                                </label>
+                                <input
+                                    type="text"
+                                    name="college"
+                                    value={formData.college}
+                                    onChange={handleChange}
+                                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-cyan-400 transition-colors"
+                                    placeholder="Enter your college name"
+                                    required={!isLogin}
+                                />
+                            </div>
+                        </>
                     )}
 
                     <div>
