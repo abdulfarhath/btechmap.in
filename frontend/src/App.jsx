@@ -1,5 +1,5 @@
-// Updated App.jsx - Replace your existing App.jsx with this
-import { useState, useEffect } from 'react';
+// Updated App.jsx
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import Sidebar from './components/Sidebar.jsx';
 import ProgressRing from './components/ProcessRing.jsx';
 import { initialRoadmapsData } from './Data.js';
@@ -9,82 +9,164 @@ import AuthModal from './components/AuthModal.jsx';
 import ProfilePage from './components/ProfilePage.jsx';
 import Quiz from './components/Quiz.jsx';
 import FinalQuiz from './components/FinalQuiz.jsx';
-import { getUser } from './authService.js';
+import { getUser, getProgress, saveProgress } from './authService.js'; // NEW: Import progress functions
 import { sectionQuizData, finalQuizData } from './QuizData.js';
 import { Trophy } from 'lucide-react';
+import { debounce } from 'lodash'; // NEW: Import debounce
 
-const calculateProgress = (data) => {
+// NEW: Install lodash for debouncing: npm install lodash
+
+// NEW: This function now takes completedSteps to hydrate the roadmaps
+
+
+const calculateProgress = (data, completedSteps) => {
   const updatedData = { ...data };
   Object.keys(updatedData).forEach(key => {
     const roadmap = updatedData[key];
     if (!roadmap || !roadmap.sections) return;
+    
     let totalSteps = 0;
-    let completedSteps = 0;
+    let completedStepsCount = 0;
+    
     roadmap.sections.forEach(section => {
       totalSteps += section.steps.length;
-      completedSteps += section.steps.filter(s => s.completed).length;
+      section.steps.forEach(step => {
+        // NEW: Construct a unique ID for each step
+        const stepId = `${key}-${section.id}-${step.id}`;
+        if (completedSteps[stepId]) {
+          step.completed = true;
+          completedStepsCount++;
+        } else {
+          step.completed = false;
+        }
+      });
     });
+    
     roadmap.totalSteps = totalSteps;
-    roadmap.completedSteps = completedSteps;
+    roadmap.completedSteps = completedStepsCount;
   });
   return updatedData;
 };
 
 export default function App() {
-  const [roadmapsData, setRoadmapsData] = useState(() => calculateProgress(initialRoadmapsData));
   const [activeRoadmap, setActiveRoadmap] = useState('dashboard');
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   const [showAuth, setShowAuth] = useState(null);
   const [user, setUser] = useState(null);
-  
-  // Quiz states
+  // Add these two lines back:
   const [showQuiz, setShowQuiz] = useState(null);
   const [showFinalQuiz, setShowFinalQuiz] = useState(null);
+
+  // NEW: All progress state is now managed here
+  const [completedSteps, setCompletedSteps] = useState(() => {
+    const saved = localStorage.getItem('completedSteps');
+    return saved ? JSON.parse(saved) : {};
+  });
+  
   const [quizProgress, setQuizProgress] = useState(() => {
     const saved = localStorage.getItem('quizProgress');
     return saved ? JSON.parse(saved) : {};
   });
+  
   const [badges, setBadges] = useState(() => {
     const saved = localStorage.getItem('badges');
     return saved ? JSON.parse(saved) : {};
   });
+
+  // NEW: State to prevent saving while loading
+  const [isLoading, setIsLoading] = useState(true);
+
+  // NEW: Hydrate roadmapsData based on completedSteps state
+  // useMemo will recalculate this only when completedSteps changes
+  const roadmapsData = useMemo(() => {
+    return calculateProgress(initialRoadmapsData, completedSteps);
+  }, [completedSteps]);
+  
+  
+  // NEW: Debounced save function to avoid spamming the API
+  const debouncedSave = useCallback(
+    debounce((progress) => {
+      if (getUser()) {
+        saveProgress(progress);
+      }
+    }, 1000), // Save 1 second after the last change
+    []
+  );
+
+  // NEW: Single function to save all progress
+  const saveAllProgress = (steps, quizzes, userBadges) => {
+    // 1. Save to localStorage (for guest/instant UI)
+    localStorage.setItem('completedSteps', JSON.stringify(steps));
+    localStorage.setItem('quizProgress', JSON.stringify(quizzes));
+    localStorage.setItem('badges', JSON.stringify(userBadges));
+
+    // 2. Save to DB (if logged in and not loading)
+    if (user && !isLoading) {
+      const progressData = {
+        completedSteps: steps,
+        quizProgress: quizzes,
+        badges: userBadges,
+      };
+      debouncedSave(progressData);
+    }
+  };
+
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('theme', theme);
   }, [theme]);
 
+  // NEW: Load user and their progress on app start
   useEffect(() => {
     const userData = getUser();
     if (userData) {
       setUser(userData);
+      loadUserProgress();
+    } else {
+      setIsLoading(false); // No user, stop loading
     }
   }, []);
 
-  // Save quiz progress to localStorage
-  useEffect(() => {
-    localStorage.setItem('quizProgress', JSON.stringify(quizProgress));
-  }, [quizProgress]);
+  const loadUserProgress = async () => {
+    setIsLoading(true);
+    const progress = await getProgress();
+    
+    // Set state from DB data
+    setCompletedSteps(progress.completedSteps || {});
+    setQuizProgress(progress.quizProgress || {});
+    setBadges(progress.badges || {});
 
-  // Save badges to localStorage
-  useEffect(() => {
-    localStorage.setItem('badges', JSON.stringify(badges));
-  }, [badges]);
+    // Update localStorage to match DB
+    localStorage.setItem('completedSteps', JSON.stringify(progress.completedSteps || {}));
+    localStorage.setItem('quizProgress', JSON.stringify(progress.quizProgress || {}));
+    localStorage.setItem('badges', JSON.stringify(progress.badges || {}));
+    
+    setIsLoading(false);
+  };
 
   const handleToggleStep = (sectionId, stepId) => {
-    setRoadmapsData(prevData => {
-      const newData = JSON.parse(JSON.stringify(prevData));
-      const roadmap = newData[activeRoadmap];
-      const section = roadmap.sections.find(s => s.id === sectionId);
-      const step = section.steps.find(s => s.id === stepId);
-      step.completed = !step.completed;
-      return calculateProgress(newData);
+    // NEW: Use the unique stepId format
+    const uniqueStepId = `${activeRoadmap}-${sectionId}-${stepId}`;
+    
+    setCompletedSteps(prev => {
+      const newSteps = { ...prev };
+      if (newSteps[uniqueStepId]) {
+        delete newSteps[uniqueStepId];
+      } else {
+        newSteps[uniqueStepId] = true;
+      }
+      
+      // Save all progress
+      saveAllProgress(newSteps, quizProgress, badges);
+      return newSteps;
     });
   };
 
   const handleAuthSuccess = () => {
     const userData = getUser();
     setUser(userData);
+    loadUserProgress(); // Load progress right after login/signup
   };
 
   const handleStartQuiz = (section) => {
@@ -92,13 +174,17 @@ export default function App() {
   };
 
   const handleQuizComplete = (sectionId, passed, score, total) => {
+    let newQuizProgress = { ...quizProgress };
     if (passed) {
       const quizKey = `${activeRoadmap}-${sectionId}`;
-      setQuizProgress(prev => ({
-        ...prev,
+      newQuizProgress = {
+        ...quizProgress,
         [quizKey]: { passed, score, total, date: new Date().toISOString() }
-      }));
+      };
     }
+    
+    setQuizProgress(newQuizProgress);
+    saveAllProgress(completedSteps, newQuizProgress, badges);
   };
 
   const handleStartFinalQuiz = () => {
@@ -107,37 +193,39 @@ export default function App() {
   };
 
   const handleFinalQuizComplete = (passed, score, total) => {
+    let newBadges = { ...badges };
     if (passed) {
-      setBadges(prev => ({
-        ...prev,
+      newBadges = {
+        ...badges,
         [activeRoadmap]: { 
           earned: true, 
           score, 
           total,
           date: new Date().toISOString() 
         }
-      }));
+      };
     }
+    
+    setBadges(newBadges);
+    saveAllProgress(completedSteps, quizProgress, newBadges);
   };
 
   // Check if user can take final quiz
-// In App.jsx
-const canTakeFinalQuiz = () => {
-  const data = roadmapsData[activeRoadmap];
-  if (!data || !data.sections) return false;
-  
-  // 1. Check if all steps are completed
-  const allStepsCompleted = data.completedSteps === data.totalSteps;
-  
-  // 2. Check if all section quizzes are passed
-  const allQuizzesPassed = data.sections.every(section => {
-    const quizKey = `${activeRoadmap}-${section.id}`;
-    return quizProgress[quizKey]?.passed;
-  });
-  
-  // It needs BOTH to be true
-  return allStepsCompleted && allQuizzesPassed;
-};
+  const canTakeFinalQuiz = () => {
+    const data = roadmapsData[activeRoadmap];
+    if (!data || !data.sections) return false;
+    
+    // Check if all steps are completed
+    const allStepsCompleted = data.completedSteps === data.totalSteps;
+    
+    // Check if all section quizzes are passed
+    const allQuizzesPassed = data.sections.every(section => {
+      const quizKey = `${activeRoadmap}-${section.id}`;
+      return quizProgress[quizKey]?.passed;
+    });
+    
+    return allStepsCompleted && allQuizzesPassed;
+  };
 
   const data = roadmapsData[activeRoadmap];
   const progressPercent =
@@ -188,26 +276,29 @@ const canTakeFinalQuiz = () => {
         setActiveRoadmap={setActiveRoadmap}
         setShowAuth={setShowAuth}
         currentUser={user}
-        badges={badges}
+        // NEW: Pass badges to Sidebar if it needs it (as per your original code)
+        badges={badges} 
       />
 
+      {/* Main Content */}
       <div className="flex-1 ml-64 p-8 bg-black max-w-[calc(100vw-260px)] bg-black no-scrollbar overflow-y-auto">
         <header className="mb-8 flex justify-between items-start">
-          <div>
+          {/* ... (Header content remains the same) ... */}
+           <div>
             {activeRoadmap === 'dashboard' ? (
               <>
                 <h1 className="text-3xl font-bold mb-4 flex items-center gap-3">
-                  📊 Dashboard
+                  {/* ... */} Dashboard
                 </h1>
                 {user && (
                   <p className="text-gray-400">
-                    Welcome back, <span className="text-cyan-400 font-semibold">{user.name}</span>! 👋
+                    Welcome back, <span className="text-cyan-400 font-semibold">{user.name}</span>!
                   </p>
                 )}
               </>
             ) : activeRoadmap === 'profile' ? (
               <h1 className="text-3xl font-bold mb-4 flex items-center gap-3">
-                👤 Profile
+                {/* ... */} Profile
               </h1>
             ) : (
               <>
@@ -226,7 +317,7 @@ const canTakeFinalQuiz = () => {
             className="border border-gray-400 dark:border-gray-700 rounded-lg py-2 px-4 text-sm font-semibold transition-all duration-300 
               bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700"
           >
-            {theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode'}
+            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
           </button>
         </header>
 
@@ -243,6 +334,7 @@ const canTakeFinalQuiz = () => {
                   : 'bg-white border-gray-300'
               }`}
             >
+              {/* ... (ProgressRing content remains the same) ... */}
               <div className="flex items-center gap-8">
                 <ProgressRing progress={progressPercent} color={data.color} />
                 <div className="flex-1"></div>
@@ -260,6 +352,7 @@ const canTakeFinalQuiz = () => {
             {/* Final Quiz Section */}
             <div className="mb-8 bg-gradient-to-br from-gray-900 to-gray-800 border-2 border-yellow-500 rounded-xl p-6">
               <div className="flex justify-between items-center">
+                {/* ... (Final Quiz content remains the same) ... */}
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <Trophy size={24} className="text-yellow-400" />
@@ -290,7 +383,7 @@ const canTakeFinalQuiz = () => {
                     ? 'Retake Challenge' 
                     : canTakeFinalQuiz() 
                       ? 'Start Challenge' 
-                      : '🔒 Locked'}
+                      : 'Locked'}
                 </button>
               </div>
             </div>

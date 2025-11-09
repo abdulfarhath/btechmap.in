@@ -1,135 +1,118 @@
-// authService.js - Add this file to your src folder
+// src/authService.js
+
+// --- Auth Functions ---
 
 const API_URL = 'http://localhost:8080/api';
 
-// Get token from localStorage
+export const login = async (email, password) => {
+    const response = await fetch(`${API_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || 'Login failed');
+    }
+
+    const data = await response.json();
+    
+    // Save token and user data
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    
+    return data;
+};
+
+export const signup = async (name, email, password) => {
+    const response = await fetch(`${API_URL}/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+    });
+
+    if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || 'Signup failed');
+    }
+
+    const data = await response.json();
+    
+    // Save token and user data
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    
+    return data;
+};
+
+export const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
+    // Clear progress data as well
+    localStorage.removeItem('completedSteps');
+    localStorage.removeItem('quizProgress');
+    localStorage.removeItem('badges');
+};
+
+export const isAuthenticated = () => {
+    return localStorage.getItem('token') !== null;
+};
+
+export const getUser = () => {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+};
+
 export const getToken = () => {
     return localStorage.getItem('token');
 };
 
-// Set token in localStorage
-const setToken = (token) => {
-    localStorage.setItem('token', token);
+
+// --- NEW! Progress Functions ---
+
+const getAuthHeaders = () => {
+    const token = getToken();
+    return {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+    };
 };
 
-// Remove token from localStorage
-const removeToken = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-};
-
-// Get user from localStorage
-export const getUser = () => {
-    const userStr = localStorage.getItem('user');
-    return userStr ? JSON.parse(userStr) : null;
-};
-
-// Set user in localStorage
-const setUser = (user) => {
-    localStorage.setItem('user', JSON.stringify(user));
-};
-
-// Check if user is authenticated
-export const isAuthenticated = () => {
-    return !!getToken();
-};
-
-// Signup
-export const signup = async (name, email, password) => {
-    try {
-        const response = await fetch(`${API_URL}/signup`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ name, email, password }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error || 'Signup failed');
-        }
-
-        // Save token and user
-        setToken(data.token);
-        setUser(data.user);
-
-        return data;
-    } catch (error) {
-        throw error;
+export const getProgress = async () => {
+    if (!isAuthenticated()) {
+        return { completedSteps: {}, quizProgress: {}, badges: {} };
     }
-};
 
-// Login
-export const login = async (email, password) => {
     try {
-        const response = await fetch(`${API_URL}/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.error || 'Login failed');
-        }
-
-        // Save token and user
-        setToken(data.token);
-        setUser(data.user);
-
-        return data;
-    } catch (error) {
-        throw error;
-    }
-};
-
-// Logout
-export const logout = async () => {
-    try {
-        const token = getToken();
-        
-        await fetch(`${API_URL}/logout`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            },
-        });
-
-        removeToken();
-    } catch (error) {
-        // Even if API call fails, remove local data
-        removeToken();
-        throw error;
-    }
-};
-
-// Get current user from API
-export const getCurrentUser = async () => {
-    try {
-        const token = getToken();
-        
-        const response = await fetch(`${API_URL}/me`, {
+        const response = await fetch(`${API_URL}/progress`, {
             method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            },
+            headers: getAuthHeaders(),
         });
 
-        const data = await response.json();
-
         if (!response.ok) {
-            throw new Error(data.error || 'Failed to get user');
+            throw new Error('Failed to fetch progress');
         }
+        
+        return await response.json();
 
-        setUser(data);
-        return data;
     } catch (error) {
-        removeToken();
-        throw error;
+        console.error('Error fetching progress:', error);
+        return { completedSteps: {}, quizProgress: {}, badges: {} };
+    }
+};
+
+export const saveProgress = async (progress) => {
+    if (!isAuthenticated()) return;
+
+    try {
+        await fetch(`${API_URL}/progress`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(progress),
+        });
+    } catch (error) {
+        console.error('Error saving progress:', error);
     }
 };
