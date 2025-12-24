@@ -1,18 +1,80 @@
 @import url('https://fonts.googleapis.com/css2?family=Yusei+Magic&family=Fredoka:wght@500;600;700&display=swap');
 @import "tailwindcss";
 
+/* Enable class-based dark mode for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 * {
     font-family: 'Yusei Magic', sans-serif;
     font-size: large;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: 'Fredoka', sans-serif;
 }
 
+/* Beautiful Light Mode Color Palette */
+:root {
+    /* Main backgrounds - warmer, softer tones */
+    --light-bg-main: #fafbfc;
+    --light-bg-sidebar: #ffffff;
+    --light-bg-card: #ffffff;
+
+    /* Accent colors - vibrant but not harsh */
+    --light-accent-primary: #3b82f6;
+    --light-accent-secondary: #8b5cf6;
+    --light-accent-success: #10b981;
+    --light-accent-warning: #f59e0b;
+
+    /* Text colors - good contrast */
+    --light-text-primary: #1e293b;
+    --light-text-secondary: #475569;
+    --light-text-muted: #94a3b8;
+
+    /* Borders - subtle */
+    --light-border: #e2e8f0;
+    --light-border-hover: #cbd5e1;
+}
+
+/* Dark mode colors */
+.dark {
+    --bg-primary: #030712;
+    --bg-secondary: #111827;
+    --sidebar-bg: #111827;
+    --card-bg: #111827;
+}
+
+/* Base styles */
+html {
+    background-color: var(--light-bg-main);
+}
+
+body {
+    background-color: var(--light-bg-main);
+    transition: background-color 0.3s ease;
+}
+
+.dark body {
+    background-color: #030712;
+}
+
+/* Smooth transitions for theme switching */
+*,
+*::before,
+*::after {
+    transition-property: background-color, border-color, color;
+    transition-timing-function: ease;
+    transition-duration: 150ms;
+}
+
 @theme {
-  --color-background-light: #f9fafb;
-  --color-background-dark: #0f172a;
-  --color-text-light: #111827;
-  --color-text-dark: #f8fafc;
+    --color-background-light: #fafbfc;
+    --color-background-dark: #0f172a;
+    --color-text-light: #1e293b;
+    --color-text-dark: #f8fafc;
 }

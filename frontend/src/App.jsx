@@ -19,21 +19,21 @@ import { debounce } from 'lodash'; // For debouncing saves
 // UPDATED: This function now hydrates roadmap state from completedSteps
 const calculateProgress = (data, completedSteps) => {
   // Create a deep copy to avoid mutating the original data
-  const updatedData = JSON.parse(JSON.stringify(data)); 
-  
+  const updatedData = JSON.parse(JSON.stringify(data));
+
   Object.keys(updatedData).forEach(key => {
     const roadmap = updatedData[key];
     if (!roadmap || !roadmap.sections) return;
-    
+
     let totalSteps = 0;
     let completedStepsCount = 0;
-    
+
     roadmap.sections.forEach(section => {
       totalSteps += section.steps.length;
       section.steps.forEach(step => {
         // Construct the unique ID for each step
         const stepId = `${key}-${section.id}-${step.id}`;
-        
+
         // Hydrate the 'completed' status from our state
         if (completedSteps[stepId]) {
           step.completed = true;
@@ -43,7 +43,7 @@ const calculateProgress = (data, completedSteps) => {
         }
       });
     });
-    
+
     roadmap.totalSteps = totalSteps;
     roadmap.completedSteps = completedStepsCount;
   });
@@ -55,22 +55,22 @@ export default function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   const [showAuth, setShowAuth] = useState(null);
   const [user, setUser] = useState(null);
-  
+
   // Quiz modal states
   const [showQuiz, setShowQuiz] = useState(null);
   const [showFinalQuiz, setShowFinalQuiz] = useState(null);
-  
+
   // All user progress is loaded from localStorage first
   const [completedSteps, setCompletedSteps] = useState(() => {
     const saved = localStorage.getItem('completedSteps');
     return saved ? JSON.parse(saved) : {};
   });
-  
+
   const [quizProgress, setQuizProgress] = useState(() => {
     const saved = localStorage.getItem('quizProgress');
     return saved ? JSON.parse(saved) : {};
   });
-  
+
   const [badges, setBadges] = useState(() => {
     const saved = localStorage.getItem('badges');
     return saved ? JSON.parse(saved) : {};
@@ -83,8 +83,8 @@ export default function App() {
   const roadmapsData = useMemo(() => {
     return calculateProgress(initialRoadmapsData, completedSteps);
   }, [completedSteps]);
-  
-  
+
+
   // Debounced save function to avoid spamming the API
   const debouncedSave = useCallback(
     debounce((progress) => {
@@ -134,7 +134,7 @@ export default function App() {
   const loadUserProgress = async () => {
     setIsLoading(true);
     const progress = await getProgress();
-    
+
     // Set state from DB data
     setCompletedSteps(progress.completedSteps || {});
     setQuizProgress(progress.quizProgress || {});
@@ -144,7 +144,7 @@ export default function App() {
     localStorage.setItem('completedSteps', JSON.stringify(progress.completedSteps || {}));
     localStorage.setItem('quizProgress', JSON.stringify(progress.quizProgress || {}));
     localStorage.setItem('badges', JSON.stringify(progress.badges || {}));
-    
+
     setIsLoading(false);
   };
 
@@ -152,7 +152,7 @@ export default function App() {
   const handleToggleStep = (sectionId, stepId) => {
     // Use the unique stepId format
     const uniqueStepId = `${activeRoadmap}-${sectionId}-${stepId}`;
-    
+
     setCompletedSteps(prev => {
       const newSteps = { ...prev };
       if (newSteps[uniqueStepId]) {
@@ -160,7 +160,7 @@ export default function App() {
       } else {
         newSteps[uniqueStepId] = true; // Check
       }
-      
+
       // Save all progress
       saveAllProgress(newSteps, quizProgress, badges);
       return newSteps;
@@ -188,7 +188,7 @@ export default function App() {
         [quizKey]: { passed, score, total, date: new Date().toISOString() }
       };
     }
-    
+
     setQuizProgress(newQuizProgress);
     saveAllProgress(completedSteps, newQuizProgress, badges);
   };
@@ -204,15 +204,15 @@ export default function App() {
     if (passed) {
       newBadges = {
         ...badges,
-        [activeRoadmap]: { 
-          earned: true, 
-          score, 
+        [activeRoadmap]: {
+          earned: true,
+          score,
           total,
-          date: new Date().toISOString() 
+          date: new Date().toISOString()
         }
       };
     }
-    
+
     setBadges(newBadges);
     saveAllProgress(completedSteps, quizProgress, newBadges);
   };
@@ -221,16 +221,16 @@ export default function App() {
   const canTakeFinalQuiz = () => {
     const data = roadmapsData[activeRoadmap];
     if (!data || !data.sections) return false;
-    
+
     // 1. Check if all steps are completed
     const allStepsCompleted = data.completedSteps === data.totalSteps;
-    
+
     // 2. Check if all section quizzes are passed
     const allQuizzesPassed = data.sections.every(section => {
       const quizKey = `${activeRoadmap}-${section.id}`;
       return quizProgress[quizKey]?.passed;
     });
-    
+
     return allStepsCompleted && allQuizzesPassed;
   };
 
@@ -278,40 +278,42 @@ export default function App() {
         }
       `}</style>
 
-      <Sidebar 
-        activeRoadmap={activeRoadmap} 
+      <Sidebar
+        activeRoadmap={activeRoadmap}
         setActiveRoadmap={setActiveRoadmap}
         setShowAuth={setShowAuth}
         currentUser={user}
-        badges={badges} 
+        badges={badges}
+        theme={theme}
+        setTheme={setTheme}
       />
 
       {/* Main Content */}
-      <div className="flex-1 ml-64 p-8 bg-black max-w-[calc(100vw-260px)] bg-black no-scrollbar overflow-y-auto h-screen">
+      <div className="flex-1 ml-64 p-8 bg-slate-100 dark:bg-slate-950 max-w-[calc(100vw-260px)] no-scrollbar overflow-y-auto h-screen transition-colors duration-200">
         <header className="mb-8 flex justify-between items-start">
           <div>
             {activeRoadmap === 'dashboard' ? (
               <>
-                <h1 className="text-3xl font-bold mb-4 flex items-center gap-3">
+                <h1 className="text-3xl font-bold mb-4 flex items-center gap-3 text-gray-800 dark:text-white">
                   {/* (icon) */} Dashboard
                 </h1>
                 {user && (
-                  <p className="text-gray-400">
-                    Welcome back, <span className="text-cyan-400 font-semibold">{user.name}</span>!
+                  <p className="text-gray-600 dark:text-gray-400">
+                    Welcome back, <span className="text-blue-600 dark:text-cyan-400 font-semibold">{user.name}</span>!
                   </p>
                 )}
               </>
             ) : activeRoadmap === 'profile' ? (
-              <h1 className="text-3xl font-bold mb-4 flex items-center gap-3">
+              <h1 className="text-3xl font-bold mb-4 flex items-center gap-3 text-gray-900 dark:text-white">
                 {/* (icon) */} Profile
               </h1>
             ) : activeRoadmap === 'leaderboard' ? (
-               <h1 className="text-3xl font-bold mb-4 flex items-center gap-3">
+              <h1 className="text-3xl font-bold mb-4 flex items-center gap-3 text-gray-900 dark:text-white">
                 {/* (icon) */} Leaderboard
               </h1>
             ) : (
               <>
-                <h1 className="text-3xl font-bold mb-4 flex items-center gap-3">
+                <h1 className="text-3xl font-bold mb-4 flex items-center gap-3 text-gray-900 dark:text-white">
                   {data.icon} {data.roadmapTitle}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -321,22 +323,16 @@ export default function App() {
             )}
           </div>
 
-          <button
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="border border-gray-400 dark:border-gray-700 rounded-lg py-2 px-4 text-sm font-semibold transition-all duration-300 
-              bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700"
-          >
-            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-          </button>
+
         </header>
 
         {/* Page Content */}
         {activeRoadmap === 'dashboard' ? (
           <Dashboard onSelectRoadmap={setActiveRoadmap} roadmapsData={roadmapsData} badges={badges} />
-        
+
         ) : activeRoadmap === 'profile' ? (
           <ProfilePage roadmapsData={roadmapsData} badges={badges} quizProgress={quizProgress} />
-        
+
         ) : activeRoadmap === 'leaderboard' ? (
           <LeaderboardPage />
 
@@ -344,20 +340,19 @@ export default function App() {
           <>
             {/* Roadmap Progress Header */}
             <div
-              className={`flex gap-8 border rounded-xl p-8 my-8 items-center transition-colors duration-300 ${
-                theme === 'dark'
-                  ? 'bg-gray-900 border-gray-800'
-                  : 'bg-white border-gray-300'
-              }`}
+              className={`flex gap-8 border rounded-xl p-8 my-8 items-center transition-colors ${theme === 'dark'
+                ? 'bg-gray-900 border-gray-800'
+                : 'bg-white border-gray-200'
+                }`}
             >
               <div className="flex items-center gap-8">
                 <ProgressRing progress={progressPercent} color={data.color} />
                 <div className="flex-1"></div>
                 <div>
-                  <h3 className="text-sm text-white dark:text-gray-400 mb-2">
+                  <h3 className="text-sm text-gray-500 dark:text-gray-400 mb-2 font-semibold">
                     TOTAL PROGRESS
                   </h3>
-                  <p className="text-2xl text-gray-500 font-bold">
+                  <p className="text-2xl text-gray-800 dark:text-gray-200 font-bold">
                     {data.completedSteps} / {data.totalSteps} STEPS
                   </p>
                 </div>
@@ -365,19 +360,19 @@ export default function App() {
             </div>
 
             {/* Final Quiz Section */}
-            <div className="mb-8 bg-gradient-to-br from-gray-900 to-gray-800 border-2 border-yellow-500 rounded-xl p-6">
+            <div className="mb-8 bg-amber-50 dark:bg-gray-800 border-2 border-amber-300 dark:border-yellow-500 rounded-xl p-6">
               <div className="flex justify-between items-center">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
-                    <Trophy size={24} className="text-yellow-400" />
-                    <h3 className="text-xl font-bold text-white">Final Challenge</h3>
+                    <Trophy size={24} className="text-amber-500" />
+                    <h3 className="text-xl font-bold text-gray-800 dark:text-white">Final Challenge</h3>
                   </div>
-                  <p className="text-gray-400 text-sm mb-2">
+                  <p className="text-gray-600 dark:text-gray-400 text-sm mb-2">
                     Complete all steps and section quizzes to unlock
                   </p>
                   {badges[activeRoadmap]?.earned && (
-                    <div className="flex items-center gap-2 text-yellow-400 text-sm">
-                      <Trophy size={16} />
+                    <div className="inline-flex items-center gap-1 px-2 py-1 bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-yellow-400 rounded-full text-sm font-semibold">
+                      <Trophy size={14} />
                       <span>Badge Earned!</span>
                     </div>
                   )}
@@ -385,18 +380,17 @@ export default function App() {
                 <button
                   onClick={handleStartFinalQuiz}
                   disabled={!canTakeFinalQuiz()}
-                  className={`px-6 py-2 rounded-lg font-semibold transition-all ${
-                    canTakeFinalQuiz()
-                      ? badges[activeRoadmap]?.earned
-                        ? 'bg-green-500 hover:bg-green-600'
-                        : 'bg-yellow-400 hover:bg-yellow-500 text-gray-900'
-                      : 'bg-gray-700 cursor-not-allowed opacity-50'
-                  }`}
+                  className={`px-6 py-2 rounded-lg font-semibold transition-colors ${canTakeFinalQuiz()
+                    ? badges[activeRoadmap]?.earned
+                      ? 'bg-green-500 hover:bg-green-600 text-white'
+                      : 'bg-amber-500 hover:bg-amber-600 text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
+                    }`}
                 >
-                  {badges[activeRoadmap]?.earned 
-                    ? 'Retake Challenge' 
-                    : canTakeFinalQuiz() 
-                      ? 'Start Challenge' 
+                  {badges[activeRoadmap]?.earned
+                    ? 'Retake Challenge'
+                    : canTakeFinalQuiz()
+                      ? 'Start Challenge'
                       : 'Locked'}
                 </button>
               </div>
@@ -404,7 +398,7 @@ export default function App() {
 
             <div className="flex gap-4 my-8 justify-between">
               <div>
-                <button className="bg-blue-500 text-white font-semibold py-2.5 px-6 rounded-lg text-sm hover:bg-blue-600 transition-all duration-300">
+                <button className="bg-blue-600 text-white font-semibold py-2.5 px-6 rounded-lg text-sm hover:bg-blue-700 transition-colors">
                   Checklist
                 </button>
               </div>

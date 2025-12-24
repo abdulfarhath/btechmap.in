@@ -1,6 +1,6 @@
 // src/authService.js
 
-const API_URL = 'http://localhost:8080/api';
+const API_URL = 'http://localhost:8081/api';
 
 // --- Auth Functions ---
 
@@ -17,11 +17,11 @@ export const login = async (email, password) => {
     }
 
     const data = await response.json();
-    
+
     // Save token and user data
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
-    
+
     return data;
 };
 
@@ -30,7 +30,7 @@ export const signup = async (name, email, password, college) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         // Updated to send all fields
-        body: JSON.stringify({ name, email, password, college }), 
+        body: JSON.stringify({ name, email, password, college }),
     });
 
     if (!response.ok) {
@@ -39,18 +39,18 @@ export const signup = async (name, email, password, college) => {
     }
 
     const data = await response.json();
-    
+
     // Save token and user data
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
-    
+
     return data;
 };
 
 export const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    
+
     // Clear progress data as well
     localStorage.removeItem('completedSteps');
     localStorage.removeItem('quizProgress');
@@ -95,9 +95,14 @@ export const getProgress = async () => {
         });
 
         if (!response.ok) {
+            if (response.status === 401) {
+                logout();
+                window.location.reload();
+                return { completedSteps: {}, quizProgress: {}, badges: {} };
+            }
             throw new Error('Failed to fetch progress');
         }
-        
+
         return await response.json();
 
     } catch (error) {
