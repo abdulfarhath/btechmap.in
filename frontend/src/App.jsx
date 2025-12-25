@@ -11,20 +11,47 @@ import HackathonsPage from './components/HackathonsPage.jsx';
 import Quiz from './components/Quiz.jsx';
 import FinalQuiz from './components/FinalQuiz.jsx';
 import { sectionQuizData, finalQuizData } from './QuizData.js';
-import { Trophy } from 'lucide-react';
+import { Trophy, Menu } from 'lucide-react';
 import useStore from './store/useStore.js';
 import { RouteHandler } from './components/RouteHandler.jsx';
 
 // Layout Component to wrap Pages
 const Layout = () => {
+  const { isSidebarOpen, closeSidebar, toggleSidebar } = useStore();
+
   return (
-    <>
+    <div className="flex h-screen bg-slate-100 dark:bg-slate-950 overflow-hidden">
       <RouteHandler />
+
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={closeSidebar}
+        />
+      )}
+
       <Sidebar />
-      <div className="flex-1 ml-64 p-8 bg-slate-100 dark:bg-slate-950 max-w-[calc(100vw-260px)] no-scrollbar overflow-y-auto h-screen transition-colors duration-200">
-        <Outlet />
+
+      <div className="flex-1 flex flex-col h-full overflow-hidden transition-all duration-300 md:ml-64">
+        {/* Mobile Header with Hamburger */}
+        <div className="md:hidden bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 p-4 flex items-center justify-between">
+          <button
+            onClick={toggleSidebar}
+            className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-cyan-400"
+          >
+            <Menu size={24} />
+          </button>
+          <span className="font-bold text-lg text-blue-600 dark:text-cyan-400">BtechMap.in</span>
+          <div className="w-6"></div> {/* Spacer for centering */}
+        </div>
+
+        {/* Main Scrollable Content */}
+        <div className="flex-1 p-4 md:p-8 overflow-y-auto no-scrollbar w-full md:max-w-[calc(100vw-260px)]">
+          <Outlet />
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

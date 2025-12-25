@@ -1,7 +1,5 @@
-// src/components/Sidebar.jsx
-
 import React, { useState } from 'react';
-import { ChevronDown, ChevronRight, Trophy } from 'lucide-react';
+import { ChevronDown, ChevronRight, Trophy, X } from 'lucide-react';
 import { initialRoadmapsData } from '../Data.js';
 import useStore from '../store/useStore.js';
 import { Link } from 'react-router-dom';
@@ -14,7 +12,9 @@ const Sidebar = () => {
         badges,
         theme,
         setTheme,
-        logoutUser
+        logoutUser,
+        isSidebarOpen,
+        closeSidebar
     } = useStore();
 
     const [expandedSections, setExpandedSections] = useState({ career: true, tech: true });
@@ -36,7 +36,12 @@ const Sidebar = () => {
     const userInitial = (user && user.name) ? user.name.charAt(0).toUpperCase() : 'G';
 
     return (
-        <div className="w-64 bg-white dark:bg-slate-900 border-r border-gray-100 dark:border-slate-800 fixed h-screen flex flex-col font-['Yusei_Magic']">
+        <div className={`
+            fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-900 border-r border-gray-100 dark:border-slate-800 
+            transform transition-transform duration-300 ease-in-out flex flex-col font-['Yusei_Magic']
+            ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+            md:translate-x-0 md:static md:inset-auto
+        `}>
             <style>{`
                 .no-scrollbar {
                     scrollbar-width: none;
@@ -49,28 +54,26 @@ const Sidebar = () => {
                 }
             `}</style>
 
+            {/* Mobile Close Button */}
+            <button
+                onClick={closeSidebar}
+                className="md:hidden absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
+            >
+                <X size={24} />
+            </button>
+
             {/* Scrollable Content Area */}
             <div className="flex-1 overflow-y-auto p-6 no-scrollbar">
                 {/* Logo */}
                 <div className="mb-8">
-                    <Link to="/" className="flex items-center gap-2">
+                    <Link to="/" className="flex items-center gap-2" onClick={closeSidebar}>
                         <span className="text-3xl font-bold text-blue-600 dark:text-cyan-400">BtechMap.in</span>
                     </Link>
                 </div>
 
                 {/* Navigation Buttons */}
                 <div className="mb-4 space-y-1">
-                    {/* <Link to="/"
-                        className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${activeRoadmap === 'dashboard'
-                            ? 'bg-blue-100 dark:bg-slate-800 text-blue-700 dark:text-cyan-400 border-l-4 border-blue-600 dark:border-cyan-400'
-                            : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-800 dark:hover:text-white'
-                            }`}
-                    >
-                        <span className="text-lg">📊</span>
-                        <span className="text-sm font-semibold">Dashboard</span>
-                    </Link> */}
-
-                    <Link to="/hackathons"
+                    <Link to="/hackathons" onClick={closeSidebar}
                         className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${activeRoadmap === 'hackathons'
                             ? 'bg-amber-100 dark:bg-slate-800 text-amber-700 dark:text-yellow-400 border-l-4 border-amber-500 dark:border-yellow-400'
                             : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-800 dark:hover:text-white'
@@ -79,22 +82,10 @@ const Sidebar = () => {
                         <span className="text-lg"><Trophy size={18} /></span>
                         <span className="text-sm font-semibold">Hackathons</span>
                     </Link>
-
-                    {/* <Link to="/leaderboard"
-                        className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${activeRoadmap === 'leaderboard'
-                            ? 'bg-amber-100 dark:bg-slate-800 text-amber-700 dark:text-yellow-400 border-l-4 border-amber-500 dark:border-yellow-400'
-                            : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-800 dark:hover:text-white'
-                            }`}
-                    >
-                        <span className="text-lg"><Trophy size={18} /></span>
-                        <span className="text-sm font-semibold">Leaderboard</span>
-                    </Link> */}
                 </div>
 
                 {/* Roadmap Links */}
                 <div className="px-1">
-                    {/* Career Links if needed */}
-
                     <div>
                         <div className="flex items-center gap-2 p-3 cursor-pointer text-orange-600 dark:text-orange-400 font-semibold rounded-lg transition-colors hover:bg-orange-50 dark:hover:bg-slate-800" onClick={() => toggleSection('tech')}>
                             {expandedSections.tech ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
@@ -106,6 +97,7 @@ const Sidebar = () => {
                                     <Link
                                         key={key}
                                         to={`/roadmap/${key}`}
+                                        onClick={closeSidebar}
                                         className={`flex items-center gap-3 p-2.5 rounded-lg text-sm transition-colors cursor-pointer ${activeRoadmap === key
                                             ? 'bg-orange-100 dark:bg-slate-800 text-orange-700 dark:text-white border-l-4 border-orange-500 pl-1.5'
                                             : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-800 dark:hover:text-white'
@@ -131,7 +123,10 @@ const Sidebar = () => {
                     {/* User Profile */}
                     <Link
                         to={user ? "/profile" : "#"}
-                        onClick={(e) => !user && e.preventDefault()}
+                        onClick={(e) => {
+                            if (!user) e.preventDefault();
+                            closeSidebar();
+                        }}
                         className="flex-1 flex items-center gap-2 p-1.5 rounded-lg bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors min-w-0"
                         title={user ? "View Profile" : "Not logged in"}
                     >

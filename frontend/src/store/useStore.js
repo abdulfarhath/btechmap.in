@@ -74,6 +74,7 @@ const useStore = create((set, get) => ({
     quizProgress: JSON.parse(localStorage.getItem('quizProgress') || '{}'),
     badges: JSON.parse(localStorage.getItem('badges') || '{}'),
     isLoading: true,
+    isSidebarOpen: false,
 
     // Quiz Modals State
     showQuiz: null, // section object
@@ -87,6 +88,10 @@ const useStore = create((set, get) => ({
 
     // Actions
     setActiveRoadmap: (roadmap) => set({ activeRoadmap: roadmap }),
+
+    setSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
+    toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
+    closeSidebar: () => set({ isSidebarOpen: false }),
 
     setTheme: (theme) => {
         localStorage.setItem('theme', theme);
