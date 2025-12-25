@@ -1,8 +1,12 @@
 // Dashboard.jsx - Deep blue dark mode with better contrast
 import { Trophy } from 'lucide-react';
+import useStore from '../store/useStore.js';
 
-const Dashboard = ({ onSelectRoadmap, roadmapsData, badges }) => {
-    const careerPaths = ['academics', 'gate'];
+const Dashboard = () => {
+    const { getRoadmapsData, badges, setActiveRoadmap } = useStore();
+    const roadmapsData = getRoadmapsData();
+
+    const careerPaths = ['gate'];
     const techPaths = ['webdev', 'dsa', 'aiml', 'datascience', 'java', 'python'];
 
     const RoadmapCard = ({ roadmapKey }) => {
@@ -16,7 +20,7 @@ const Dashboard = ({ onSelectRoadmap, roadmapsData, badges }) => {
 
         return (
             <div
-                onClick={() => onSelectRoadmap(roadmapKey)}
+                onClick={() => setActiveRoadmap(roadmapKey)}
                 className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 cursor-pointer transition-all duration-200 hover:border-blue-400 dark:hover:border-cyan-500 hover:shadow-lg relative"
             >
                 {hasBadge && (

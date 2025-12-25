@@ -1,10 +1,10 @@
 // FinalQuiz.jsx
-// Create this file in: src/components/FinalQuiz.jsx
-
 import React, { useState } from 'react';
 import { X, CheckCircle, XCircle, Trophy } from 'lucide-react';
+import useStore from '../store/useStore.js';
 
-const FinalQuiz = ({ roadmap, roadmapKey, onClose, onComplete, finalQuizData }) => {
+const FinalQuiz = ({ roadmap, roadmapKey, finalQuizData }) => {
+  const { setShowFinalQuiz, completeFinalQuiz } = useStore();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showResult, setShowResult] = useState(false);
@@ -36,8 +36,8 @@ const FinalQuiz = ({ roadmap, roadmapKey, onClose, onComplete, finalQuizData }) 
 
   const handleFinish = () => {
     const passed = score >= Math.ceil(questions.length * 0.7);
-    onComplete(passed, score, questions.length);
-    onClose();
+    completeFinalQuiz(passed, score, questions.length);
+    setShowFinalQuiz(null);
   };
 
   const restartQuiz = () => {
@@ -47,6 +47,8 @@ const FinalQuiz = ({ roadmap, roadmapKey, onClose, onComplete, finalQuizData }) 
     setScore(0);
     setAnswers([]);
   };
+
+  const onClose = () => setShowFinalQuiz(null);
 
   if (questions.length === 0) {
     return (
@@ -103,8 +105,8 @@ const FinalQuiz = ({ roadmap, roadmapKey, onClose, onComplete, finalQuizData }) 
                     key={index}
                     onClick={() => handleAnswerSelect(index)}
                     className={`w-full text-left p-4 rounded-lg border-2 transition-all ${selectedAnswer === index
-                        ? 'border-yellow-500 dark:border-yellow-400 bg-yellow-50 dark:bg-yellow-400/10'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600'
+                      ? 'border-yellow-500 dark:border-yellow-400 bg-yellow-50 dark:bg-yellow-400/10'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600'
                       }`}
                   >
                     <span className="text-gray-900 dark:text-white">{option}</span>

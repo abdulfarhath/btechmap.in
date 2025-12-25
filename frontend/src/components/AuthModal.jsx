@@ -3,8 +3,10 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { login, signup } from '../authService.js';
+import useStore from '../store/useStore.js';
 
-const AuthModal = ({ mode, onClose, onSuccess }) => {
+const AuthModal = ({ mode }) => {
+    const { setShowAuth, loadUserProgress, setUser } = useStore();
     const [isLogin, setIsLogin] = useState(mode === 'login');
     const [formData, setFormData] = useState({
         name: '',
@@ -45,12 +47,13 @@ const AuthModal = ({ mode, onClose, onSuccess }) => {
 
             console.log('Authentication successful:', result);
 
-            // Call onSuccess callback to update parent component
-            onSuccess();
+            // Update store
+            setUser(result.user);
+            loadUserProgress();
 
             // Close modal after a brief delay
             setTimeout(() => {
-                onClose();
+                setShowAuth(null);
             }, 100);
         } catch (err) {
             setError(err.message || 'Authentication failed');
@@ -71,7 +74,7 @@ const AuthModal = ({ mode, onClose, onSuccess }) => {
             <div className="bg-white dark:bg-gray-900 rounded-xl p-8 max-w-md w-full relative border border-gray-200 dark:border-gray-800 shadow-xl">
                 {/* Close button */}
                 <button
-                    onClick={onClose}
+                    onClick={() => setShowAuth(null)}
                     className="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
                     <X size={24} />

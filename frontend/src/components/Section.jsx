@@ -2,9 +2,15 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, Award } from 'lucide-react';
 import StepRow from './Steprow.jsx';
+import useStore from '../store/useStore.js';
 
-const Section = ({ section, roadmapColor, onToggleStep, onStartQuiz, quizStatus }) => {
+const Section = ({ section, roadmapColor }) => {
+    const { toggleStep, setShowQuiz, quizProgress, activeRoadmap } = useStore();
     const [expanded, setExpanded] = useState(true);
+
+    const quizKey = `${activeRoadmap}-${section.id}`;
+    const quizStatus = quizProgress[quizKey];
+
     const progress = section.steps.filter(s => s.completed).length;
     const total = section.steps.length;
     const isPassed = quizStatus?.passed;
@@ -28,11 +34,11 @@ const Section = ({ section, roadmapColor, onToggleStep, onStartQuiz, quizStatus 
                     <button
                         onClick={(e) => {
                             e.stopPropagation();
-                            onStartQuiz(section);
+                            setShowQuiz(section);
                         }}
                         className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors text-white ${isPassed
-                                ? 'bg-green-500 hover:bg-green-600'
-                                : 'bg-purple-500 hover:bg-purple-600'
+                            ? 'bg-green-500 hover:bg-green-600'
+                            : 'bg-purple-500 hover:bg-purple-600'
                             }`}
                     >
                         {isPassed ? 'Retake Quiz' : 'Take Quiz'}
@@ -68,7 +74,7 @@ const Section = ({ section, roadmapColor, onToggleStep, onStartQuiz, quizStatus 
                             key={step.id}
                             step={step}
                             roadmapColor={roadmapColor}
-                            onToggle={() => onToggleStep(section.id, step.id)}
+                            onToggle={() => toggleStep(section.id, step.id)}
                         />
                     ))}
                 </div>

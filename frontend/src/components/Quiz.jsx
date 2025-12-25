@@ -1,8 +1,10 @@
 // Quiz.jsx - Add this to your components folder
 import React, { useState } from 'react';
 import { X, CheckCircle, XCircle, Trophy } from 'lucide-react';
+import useStore from '../store/useStore.js';
 
-const Quiz = ({ section, roadmapKey, onClose, onComplete, quizData }) => {
+const Quiz = ({ section, roadmapKey, quizData }) => {
+  const { setShowQuiz, completeQuiz } = useStore();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showResult, setShowResult] = useState(false);
@@ -34,8 +36,8 @@ const Quiz = ({ section, roadmapKey, onClose, onComplete, quizData }) => {
 
   const handleFinish = () => {
     const passed = score >= Math.ceil(questions.length * 0.6);
-    onComplete(section.id, passed, score, questions.length);
-    onClose();
+    completeQuiz(section.id, passed, score, questions.length);
+    setShowQuiz(null);
   };
 
   const restartQuiz = () => {
@@ -45,6 +47,8 @@ const Quiz = ({ section, roadmapKey, onClose, onComplete, quizData }) => {
     setScore(0);
     setAnswers([]);
   };
+
+  const onClose = () => setShowQuiz(null);
 
   if (questions.length === 0) {
     return (
@@ -94,8 +98,8 @@ const Quiz = ({ section, roadmapKey, onClose, onComplete, quizData }) => {
                     key={index}
                     onClick={() => handleAnswerSelect(index)}
                     className={`w-full text-left p-4 rounded-lg border-2 transition-all ${selectedAnswer === index
-                        ? 'border-cyan-500 dark:border-cyan-400 bg-cyan-50 dark:bg-cyan-400/10'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600'
+                      ? 'border-cyan-500 dark:border-cyan-400 bg-cyan-50 dark:bg-cyan-400/10'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600'
                       }`}
                   >
                     <span className="text-gray-900 dark:text-white">{option}</span>

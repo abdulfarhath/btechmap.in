@@ -1,24 +1,23 @@
 // src/components/Sidebar.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ChevronDown, ChevronRight, Trophy } from 'lucide-react';
 import { initialRoadmapsData } from '../Data.js';
-import { isAuthenticated, getUser, logout } from '../authService.js';
+import useStore from '../store/useStore.js';
 
-const Sidebar = ({ activeRoadmap, setActiveRoadmap, setShowAuth, currentUser, badges, theme, setTheme }) => {
+const Sidebar = () => {
+    const {
+        activeRoadmap,
+        setActiveRoadmap,
+        setShowAuth,
+        user,
+        badges,
+        theme,
+        setTheme,
+        logoutUser
+    } = useStore();
+
     const [expandedSections, setExpandedSections] = useState({ career: true, tech: true });
-    const [user, setUser] = useState(null);
-
-    useEffect(() => {
-        if (currentUser) {
-            setUser(currentUser);
-        } else if (isAuthenticated()) {
-            const userData = getUser();
-            setUser(userData);
-        } else {
-            setUser(null);
-        }
-    }, [currentUser]);
 
     const toggleSection = (section) => {
         setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -26,15 +25,13 @@ const Sidebar = ({ activeRoadmap, setActiveRoadmap, setShowAuth, currentUser, ba
 
     const handleAuthToggle = async () => {
         if (user) {
-            logout();
-            setUser(null);
-            window.location.reload();
+            logoutUser();
         } else {
             setShowAuth('login');
         }
     };
 
-    const careerPaths = ['academics', 'gate'];
+    const careerPaths = ['gate'];
     const techPaths = ['webdev', 'dsa', 'aiml', 'datascience', 'java', 'python'];
     const userInitial = (user && user.name) ? user.name.charAt(0).toUpperCase() : 'G';
 
