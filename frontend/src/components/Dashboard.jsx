@@ -1,9 +1,10 @@
 // Dashboard.jsx - Deep blue dark mode with better contrast
 import { Trophy } from 'lucide-react';
 import useStore from '../store/useStore.js';
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
-    const { getRoadmapsData, badges, setActiveRoadmap } = useStore();
+    const { getRoadmapsData, badges } = useStore();
     const roadmapsData = getRoadmapsData();
 
     const careerPaths = ['gate'];
@@ -19,9 +20,9 @@ const Dashboard = () => {
         const hasBadge = badges[roadmapKey]?.earned;
 
         return (
-            <div
-                onClick={() => setActiveRoadmap(roadmapKey)}
-                className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 cursor-pointer transition-all duration-200 hover:border-blue-400 dark:hover:border-cyan-500 hover:shadow-lg relative"
+            <Link
+                to={`/roadmap/${roadmapKey}`}
+                className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 cursor-pointer transition-all duration-200 hover:border-blue-400 dark:hover:border-cyan-500 hover:shadow-lg relative block"
             >
                 {hasBadge && (
                     <div className="absolute top-4 right-4">
@@ -63,7 +64,7 @@ const Dashboard = () => {
                         Badge Earned
                     </div>
                 )}
-            </div>
+            </Link>
         );
     };
 

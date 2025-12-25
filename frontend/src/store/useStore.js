@@ -34,7 +34,27 @@ const calculateProgress = (data, completedSteps) => {
         roadmap.totalSteps = totalSteps;
         roadmap.completedSteps = completedStepsCount;
     });
-    return updatedData;
+
+    // Restore Proxy behavior to handle missing keys (like 'dashboard') gracefully
+    return new Proxy(updatedData, {
+        get(target, prop, receiver) {
+            if (typeof prop === 'symbol') {
+                return Reflect.get(target, prop, receiver);
+            }
+            if (prop in target) {
+                return Reflect.get(target, prop, receiver);
+            }
+            // Default placeholder for missing keys to prevent crashes/redirects
+            return {
+                cardTitle: "Coming Soon",
+                roadmapTitle: "Coming Soon",
+                icon: "📘",
+                color: "#9CA3AF",
+                description: "Content will be added soon. Check back later!",
+                sections: []
+            };
+        }
+    });
 };
 
 // Debounced save function
@@ -46,7 +66,7 @@ const debouncedSave = debounce((progress) => {
 
 const useStore = create((set, get) => ({
     // State
-    activeRoadmap: 'dashboard',
+    activeRoadmap: 'hackathons',
     theme: localStorage.getItem('theme') || 'dark',
     showAuth: null, // 'login' | 'signup' | null
     user: getUser(),
