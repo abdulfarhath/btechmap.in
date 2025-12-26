@@ -163,38 +163,38 @@ const HackathonsPage = () => {
         <div className="max-w-screen-xl mx-auto pb-20 px-4 sm:px-6">
 
             {/* Hero Section */}
-            <div className="relative overflow-hidden rounded-3xl bg-slate-900 text-white mb-16 p-8 md:p-16 shadow-2xl border border-slate-800">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 text-gray-900 dark:text-white mb-16 p-8 md:p-16 shadow-xl dark:shadow-2xl border border-blue-100 dark:border-slate-800">
                 {/* Abstract Background Shapes */}
-                <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-blue-600 rounded-full blur-[100px] opacity-20 animate-pulse"></div>
-                <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-purple-600 rounded-full blur-[100px] opacity-20"></div>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-900/10 via-slate-900/50 to-slate-900 pointer-events-none"></div>
+                <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-blue-400 dark:bg-blue-600 rounded-full blur-[100px] opacity-10 dark:opacity-20 animate-pulse"></div>
+                <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-purple-400 dark:bg-purple-600 rounded-full blur-[100px] opacity-10 dark:opacity-20"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/50 via-transparent to-transparent dark:from-blue-900/10 dark:via-slate-900/50 dark:to-slate-900 pointer-events-none"></div>
 
                 <div className="relative z-10 text-center max-w-3xl mx-auto">
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 text-xs font-bold uppercase tracking-widest mb-6 backdrop-blur-md">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 dark:bg-blue-500/10 border border-blue-300/50 dark:border-blue-400/20 text-blue-600 dark:text-blue-300 text-xs font-bold uppercase tracking-widest mb-6 backdrop-blur-md">
                         <Globe size={12} /> Global & India 2026
                     </div>
 
-                    <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-blue-200">
+                    <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 dark:from-white dark:via-blue-100 dark:to-blue-200">
                         Hackathon Calendar
                     </h1>
 
-                    <p className="text-slate-400 text-lg md:text-xl mb-10 leading-relaxed">
-                        The ultimate schedule for 2026. <span className="text-white font-medium">₹50Cr+ prize pool</span> and <span className="text-white font-medium">top-tier hiring opportunities</span> curated for you.
+                    <p className="text-gray-600 dark:text-slate-400 text-lg md:text-xl mb-10 leading-relaxed">
+                        The ultimate schedule for 2026. <span className="text-blue-600 dark:text-white font-medium">₹50Cr+ prize pool</span> and <span className="text-blue-600 dark:text-white font-medium">top-tier hiring opportunities</span> curated for you.
                     </p>
 
                     <div className="flex flex-wrap justify-center gap-4">
-                        <div className="flex items-center gap-3 px-6 py-3 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
-                            <Calendar className="text-blue-400" />
+                        <div className="flex items-center gap-3 px-6 py-3 bg-white/70 dark:bg-white/5 backdrop-blur-sm rounded-xl border border-blue-200/50 dark:border-white/10 hover:bg-white dark:hover:bg-white/10 transition-colors shadow-sm">
+                            <Calendar className="text-blue-500 dark:text-blue-400" />
                             <div className="text-left">
-                                <p className="text-xs text-slate-400 uppercase font-bold">Timeline</p>
-                                <p className="text-sm font-semibold text-white">Jan - Dec 2026</p>
+                                <p className="text-xs text-gray-500 dark:text-slate-400 uppercase font-bold">Timeline</p>
+                                <p className="text-sm font-semibold text-gray-800 dark:text-white">Jan - Dec 2026</p>
                             </div>
                         </div>
-                        <div className="flex items-center gap-3 px-6 py-3 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 hover:bg-white/10 transition-colors">
-                            <Trophy className="text-amber-400" />
+                        <div className="flex items-center gap-3 px-6 py-3 bg-white/70 dark:bg-white/5 backdrop-blur-sm rounded-xl border border-blue-200/50 dark:border-white/10 hover:bg-white dark:hover:bg-white/10 transition-colors shadow-sm">
+                            <Trophy className="text-amber-500 dark:text-amber-400" />
                             <div className="text-left">
-                                <p className="text-xs text-slate-400 uppercase font-bold">Opportunity</p>
-                                <p className="text-sm font-semibold text-white">PPOs & Internships</p>
+                                <p className="text-xs text-gray-500 dark:text-slate-400 uppercase font-bold">Opportunity</p>
+                                <p className="text-sm font-semibold text-gray-800 dark:text-white">PPOs & Internships</p>
                             </div>
                         </div>
                     </div>
