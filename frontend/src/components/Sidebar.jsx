@@ -67,7 +67,7 @@ const Sidebar = () => {
                 {/* Logo */}
                 <div className="mb-8">
                     <Link to="/" className="flex items-center gap-2" onClick={closeSidebar}>
-                        <span className="text-3xl font-bold text-blue-600 dark:text-cyan-400">BtechMap.in</span>
+                        <span className="text-4xl font-bold text-blue-600 dark:text-cyan-400">Consistenzy.in</span>
                     </Link>
                 </div>
 

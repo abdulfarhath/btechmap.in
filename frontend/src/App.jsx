@@ -42,7 +42,7 @@ const Layout = () => {
           >
             <Menu size={24} />
           </button>
-          <span className="font-bold text-lg text-blue-600 dark:text-cyan-400">BtechMap.in</span>
+          <span className="font-bold text-lg text-blue-600 dark:text-cyan-400">Consistenzy.in</span>
           <div className="w-6"></div> {/* Spacer for centering */}
         </div>
 
